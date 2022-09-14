@@ -1,0 +1,10 @@
+This file is used to uniquely identify this repository for the purposes of dependency management.
+Other repositories that depend on this one will search for this file upon initial setup and
+generate information that is used when activating development environments.
+
+**** PLEASE DO NOT MODIFY, REMOVE, OR RENAME THIS FILE, AS DOING SO WILL LIKELY BREAK OTHER REPOSITORIES! ****
+
+Friendly Name:      Common_PythonDevelopment
+Id:                 e4170a9d-70f9-4615-85b6-d514055e62b6
+
+Version 4.0.0
