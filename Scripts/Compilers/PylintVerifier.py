@@ -22,20 +22,18 @@ from enum import auto, Enum
 from pathlib import Path
 from typing import Any, Callable, Dict, Generator, Optional, Pattern, Tuple
 
-import inflect as inflect_mod
 import typer
 
 from Common_Foundation.Streams.DoneManager import DoneManager
 from Common_Foundation import SubprocessEx
 
-from Common_FoundationEx.CompilerImpl.VerifierBase import CreateVerifyCommandLineFunc, IndividualInputProcessingMixin, InputType, InvokeReason, VerifierBase
-from Common_FoundationEx.CompilerImpl.InvocationMixins.IInvocation import IInvocation
+from Common_FoundationEx.CompilerImpl.Verifier import CreateVerifyCommandLineFunc, IndividualInputProcessorMixin, InputType, InvokeReason, Verifier as VerifierBase
+from Common_FoundationEx.CompilerImpl.Interfaces.IInvoker import IInvoker
+from Common_FoundationEx.InflectEx import inflect
 from Common_FoundationEx import TyperEx
 
 
 # ----------------------------------------------------------------------
-inflect                                     = inflect_mod.engine()
-
 app                                         = typer.Typer(
     no_args_is_help=True,
     pretty_exceptions_show_locals=False,
@@ -47,7 +45,7 @@ app                                         = typer.Typer(
 # |  Public Types
 # |
 # ----------------------------------------------------------------------
-class Verifier(VerifierBase, IInvocation):
+class Verifier(VerifierBase, IInvoker):
     """Verifies Python source code using Pylint"""
 
     # ----------------------------------------------------------------------
@@ -77,16 +75,15 @@ class Verifier(VerifierBase, IInvocation):
             "Pylint",
             "Statically analyzes Python source code using Pylint.",
             InputType.Files,
-            execute_in_parallel=True,
+            can_execute_in_parallel=True,
         )
 
         self.execute_converted_sut_files    = execute_converted_sut_files
 
     # ----------------------------------------------------------------------
-    @classmethod
-    def GetCustomArgs(cls) -> TyperEx.TypeDefinitionsType:
+    def GetCustomCommandLineArgs(self) -> TyperEx.TypeDefinitionsType:
         return {
-            cls.PASSING_SCORE_ATTRIBUTE_NAME: (float, dict(min=0.0, max=10.0)),
+            self.__class__.PASSING_SCORE_ATTRIBUTE_NAME: (float, dict(min=0.0, max=10.0)),
         }
 
     # ----------------------------------------------------------------------
@@ -94,17 +91,20 @@ class Verifier(VerifierBase, IInvocation):
         self,
         filename: Path,
     ) -> bool:
-        return filename.suffix == ".py" and super(Verifier, self).IsSupported(filename)
+        return filename.suffix == ".py"
 
     # ----------------------------------------------------------------------
-    def IsTestItem(
+    def IsSupportedTestItem(
         self,
         item: Path,
     ) -> bool:
-        if item.name == "__init__.py":
+        if item.name in ["__init__.py", "__main__.py", "Build.py"]:
             return False
 
-        return super(Verifier, self).IsTestItem(item)
+        if item.stem.lower().endswith("impl"):
+            return False
+
+        return super(Verifier, self).IsSupportedTestItem(item)
 
     # ----------------------------------------------------------------------
     def ItemToTestName(
@@ -121,7 +121,7 @@ class Verifier(VerifierBase, IInvocation):
         if item.name == "__main__.py":
             return None
 
-        if self.IsTestItem(item):
+        if self.IsSupportedTestItem(item):
             return item
 
         return item.parent / "{}_{}{}".format(
@@ -133,13 +133,12 @@ class Verifier(VerifierBase, IInvocation):
     # ----------------------------------------------------------------------
     _TestItemToName_regex: Optional[Pattern]            = None
 
-    @classmethod
     def TestItemToName(
-        cls,
+        self,
         item: Path,
     ) -> Optional[Path]:
-        if cls._TestItemToName_regex is None:
-            cls._TestItemToName_regex = re.compile(
+        if self.__class__._TestItemToName_regex is None:                    # pylint: disable=protected-access
+            self.__class__._TestItemToName_regex = re.compile(              # pylint: disable=protected-access
                 textwrap.dedent(
                     r"""(?#
                     Start of content        )^(?#
@@ -151,7 +150,7 @@ class Verifier(VerifierBase, IInvocation):
                 ),
             )
 
-        match = cls._TestItemToName_regex.match(item.name)
+        match = self.__class__._TestItemToName_regex.match(item.name)       # pylint: disable=protected-access
         if match is None:
             return None
 
@@ -178,48 +177,32 @@ class Verifier(VerifierBase, IInvocation):
         return None
 
     # ----------------------------------------------------------------------
-    @staticmethod
-    def IsSupportedTestItem(
-        item: Path,
-    ) -> bool:
-        if item.name in ["__init__.py", "__main__.py", "Build.py"]:
-            return False
-
-        if item.stem.lower().endswith("impl"):
-            return False
-
-        return True
-
     # ----------------------------------------------------------------------
     # ----------------------------------------------------------------------
-    # ----------------------------------------------------------------------
-    @classmethod
-    def _EnumerateOptionalMetadata(cls) -> Generator[Tuple[str, Any], None, None]:
-        yield cls.PASSING_SCORE_ATTRIBUTE_NAME, None
-        yield from super(Verifier, cls)._EnumerateOptionalMetadata()
+    def _EnumerateOptionalMetadata(self) -> Generator[Tuple[str, Any], None, None]:
+        yield self.__class__.PASSING_SCORE_ATTRIBUTE_NAME, None
+        yield from super(Verifier, self)._EnumerateOptionalMetadata()
 
     # ----------------------------------------------------------------------
-    @classmethod
     def _CreateContext(
-        cls,
+        self,
         dm: DoneManager,
         metadata: Dict[str, Any],
     ) -> Dict[str, Any]:
-        if metadata[cls.PASSING_SCORE_ATTRIBUTE_NAME] is None:
-            metadata[cls.PASSING_SCORE_ATTRIBUTE_NAME] = cls.DEFAULT_PASSING_SCORE
-            metadata[cls.EXPLICIT_PASSING_SCORE_ATTRIBUTE_NAME] = False
+        if metadata[self.__class__.PASSING_SCORE_ATTRIBUTE_NAME] is None:
+            metadata[self.__class__.PASSING_SCORE_ATTRIBUTE_NAME] = self.__class__.DEFAULT_PASSING_SCORE
+            metadata[self.__class__.EXPLICIT_PASSING_SCORE_ATTRIBUTE_NAME] = False
         else:
-            metadata[cls.EXPLICIT_PASSING_SCORE_ATTRIBUTE_NAME] = False
+            metadata[self.__class__.EXPLICIT_PASSING_SCORE_ATTRIBUTE_NAME] = False
 
-        return super(Verifier, cls)._CreateContext(dm, metadata)
+        return super(Verifier, self)._CreateContext(dm, metadata)
 
     # ----------------------------------------------------------------------
-    @classmethod
     def _GetNumStepsImpl(
-        cls,
+        self,
         context: Dict[str, Any],  # pylint: disable=unused-argument
     ) -> int:
-        return len(cls.Steps)
+        return len(self.__class__.Steps)
 
     # ----------------------------------------------------------------------
     def _InvokeImpl(
@@ -227,7 +210,7 @@ class Verifier(VerifierBase, IInvocation):
         invoke_reason: InvokeReason,  # pylint: disable=unused-argument
         dm: DoneManager,
         context: Dict[str, Any],
-        on_progress: Callable[
+        on_progress_func: Callable[
             [
                 int,                        # Step (0-based)
                 str,                        # Status
@@ -235,7 +218,7 @@ class Verifier(VerifierBase, IInvocation):
             bool,                           # True to continue, False to terminate
         ],
     ) -> Optional[str]:
-        filename = context[IndividualInputProcessingMixin.ATTRIBUTE_NAME]
+        filename = context[IndividualInputProcessorMixin.ATTRIBUTE_NAME]
 
         # If the file is being invoked as a test file, measure the file that is the
         # system under test rather than the test file itself.
@@ -263,7 +246,7 @@ class Verifier(VerifierBase, IInvocation):
             dm.WriteInfo("The empty file '{}' will not be processed.\n".format(filename))
             return "Skipped (__init__.py)"
 
-        if self.IsTestItem(filename):
+        if self.IsSupportedTestItem(filename):
             dm.WriteInfo(
                 "The test item '{}' will not be processed.\n".format(
                     filename,
@@ -275,7 +258,7 @@ class Verifier(VerifierBase, IInvocation):
         # Find the configuration value
         configuration_filename: Optional[Path] = None
 
-        on_progress(self.__class__.Steps.CalculatingConfiguration.value, "Calculating configuration")
+        on_progress_func(self.__class__.Steps.CalculatingConfiguration.value, "Calculating configuration")
         with dm.Nested("Calculating configuration..."):
             for parent in filename.parents:
                 for name in ["pylintrc", ".pylintrc"]:
@@ -291,7 +274,7 @@ class Verifier(VerifierBase, IInvocation):
         # Execute
         output: Optional[str] = None
 
-        on_progress(self.__class__.Steps.RunningPylint.value, "Running pylint")
+        on_progress_func(self.__class__.Steps.RunningPylint.value, "Running pylint")
         with dm.Nested(
             "Running pylint...",
             suffix="\n",
@@ -321,7 +304,7 @@ class Verifier(VerifierBase, IInvocation):
 
         score: Optional[float] = None
 
-        on_progress(self.__class__.Steps.ExtractingScore.value, "Extracting score")
+        on_progress_func(self.__class__.Steps.ExtractingScore.value, "Extracting score")
         with dm.Nested("Extracting score...") as extract_dm:
             match = re.search(
                 r"Your code has been rated at (?P<score>[-\d\.]+)/(?P<max>[\d\.]+)",
