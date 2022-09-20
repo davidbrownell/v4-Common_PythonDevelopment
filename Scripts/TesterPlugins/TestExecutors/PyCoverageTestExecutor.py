@@ -33,7 +33,7 @@ from Common_Foundation.Streams.DoneManager import DoneManager
 from Common_Foundation import SubprocessEx
 from Common_Foundation import Types
 
-from Common_FoundationEx.CompilerImpl import CompilerImpl
+from Common_FoundationEx.CompilerImpl.CompilerImpl import CompilerImpl
 from Common_FoundationEx.TesterPlugins.TestExecutorImpl import CoverageResult, ExecuteResult, TestExecutorImpl
 from Common_FoundationEx import TyperEx
 
@@ -79,7 +79,7 @@ class TestExecutor(TestExecutorImpl):
 
     # ----------------------------------------------------------------------
     @staticmethod
-    def GetCustomArgs() -> TyperEx.TypeDefinitionsType:
+    def GetCustomCommandLineArgs() -> TyperEx.TypeDefinitionsType:
         # No custom argument support
         return {}
 

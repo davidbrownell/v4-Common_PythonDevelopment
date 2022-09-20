@@ -25,7 +25,7 @@ from typing import Any, Callable, Dict, List
 
 from Common_FoundationEx.CompilerImpl.CompilerImpl import CompilerImpl
 from Common_FoundationEx.InflectEx import inflect
-from Common_FoundationEx.CompilerImpl.InputProcessingMixins.IndividualInputProcessingMixin import IndividualInputProcessingMixin
+from Common_FoundationEx.CompilerImpl.Mixins.InputProcessorMixins.IndividualInputProcessorMixin import IndividualInputProcessorMixin
 from Common_FoundationEx.TesterPlugins.TestParserImpl import BenchmarkStat, SubtestResult, TestParserImpl, TestResult, Units
 from Common_FoundationEx import TyperEx
 
@@ -42,7 +42,7 @@ class TestParser(TestParserImpl):
 
     # ----------------------------------------------------------------------
     @staticmethod
-    def GetCustomArgs() -> TyperEx.TypeDefinitionsType:
+    def GetCustomCommandLineArgs() -> TyperEx.TypeDefinitionsType:
         return {}
 
     # ----------------------------------------------------------------------
@@ -142,7 +142,7 @@ class TestParser(TestParserImpl):
                 benchmark_version,
             )
 
-            filename = compiler_context[IndividualInputProcessingMixin.ATTRIBUTE_NAME]
+            filename = compiler_context[IndividualInputProcessorMixin.ATTRIBUTE_NAME]
 
             for line_item in match.split("\n"):
                 line_item = line_item.strip()

@@ -24,17 +24,27 @@ from typing import Any, Callable, Dict, Generator, Optional, Pattern, Tuple
 
 import typer
 
+from typer.core import TyperGroup
+
 from Common_Foundation.Streams.DoneManager import DoneManager
 from Common_Foundation import SubprocessEx
 
-from Common_FoundationEx.CompilerImpl.Verifier import CreateVerifyCommandLineFunc, IndividualInputProcessorMixin, InputType, InvokeReason, Verifier as VerifierBase
+from Common_FoundationEx.CompilerImpl.Verifier import CreateListCommandLineFunc, CreateVerifyCommandLineFunc, IndividualInputProcessorMixin, InputType, InvokeReason, Verifier as VerifierBase
 from Common_FoundationEx.CompilerImpl.Interfaces.IInvoker import IInvoker
 from Common_FoundationEx.InflectEx import inflect
 from Common_FoundationEx import TyperEx
 
 
 # ----------------------------------------------------------------------
+class NaturalOrderGrouper(TyperGroup):
+    # ----------------------------------------------------------------------
+    def list_commands(self, *args, **kwargs):  # pylint: disable=unused-argument
+        return self.commands.keys()
+
+
+# ----------------------------------------------------------------------
 app                                         = typer.Typer(
+    cls=NaturalOrderGrouper,
     no_args_is_help=True,
     pretty_exceptions_show_locals=False,
 )
@@ -193,7 +203,7 @@ class Verifier(VerifierBase, IInvoker):
             metadata[self.__class__.PASSING_SCORE_ATTRIBUTE_NAME] = self.__class__.DEFAULT_PASSING_SCORE
             metadata[self.__class__.EXPLICIT_PASSING_SCORE_ATTRIBUTE_NAME] = False
         else:
-            metadata[self.__class__.EXPLICIT_PASSING_SCORE_ATTRIBUTE_NAME] = False
+            metadata[self.__class__.EXPLICIT_PASSING_SCORE_ATTRIBUTE_NAME] = True
 
         return super(Verifier, self)._CreateContext(dm, metadata)
 
@@ -352,20 +362,20 @@ class Verifier(VerifierBase, IInvoker):
 # |  Public Functions
 # |
 # ----------------------------------------------------------------------
-Verify                                      = CreateVerifyCommandLineFunc(
-    app,
-    Verifier(
-        # When running this verifier in isolation, we don't want to execute converted files as they
-        # are likely to be picked up by a recursive search for all python files (since the verifier
-        # when run from the command line, will generally be invoked on a root directory).
-        #
-        # When running as a part of Tester, we do want to execute the converted files because Tester
-        # is pointed to the test files and won't pick up the converted files. Tester opts in to this
-        # behavior by setting this value to True.
-        #
-        execute_converted_sut_files=False,
-    ),
+_verifier                                   = Verifier(
+    # When running this verifier in isolation, we don't want to execute converted files as they
+    # are likely to be picked up by a recursive search for all python files (since the verifier
+    # when run from the command line, will generally be invoked on a root directory).
+    #
+    # When running as a part of Tester, we do want to execute the converted files because Tester
+    # is pointed to the test files and won't pick up the converted files. Tester opts in to this
+    # behavior by setting this value to True.
+    #
+    execute_converted_sut_files=False,
 )
+
+Verify                                      = CreateVerifyCommandLineFunc(app, _verifier)
+List                                        = CreateListCommandLineFunc(app, _verifier)
 
 
 # ----------------------------------------------------------------------
