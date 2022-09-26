@@ -23,9 +23,11 @@ import time
 from pathlib import Path
 from typing import Any, Callable, Dict, List
 
+from Common_Foundation.Types import overridemethod
+
 from Common_FoundationEx.CompilerImpl.CompilerImpl import CompilerImpl
-from Common_FoundationEx.InflectEx import inflect
 from Common_FoundationEx.CompilerImpl.Mixins.InputProcessorMixins.IndividualInputProcessorMixin import IndividualInputProcessorMixin
+from Common_FoundationEx.InflectEx import inflect
 from Common_FoundationEx.TesterPlugins.TestParserImpl import BenchmarkStat, SubtestResult, TestParserImpl, TestResult, Units
 from Common_FoundationEx import TyperEx
 
@@ -41,21 +43,23 @@ class TestParser(TestParserImpl):
         super(TestParser, self).__init__("Pytest", "Parses Python pytest output.")
 
     # ----------------------------------------------------------------------
-    @staticmethod
-    def GetCustomCommandLineArgs() -> TyperEx.TypeDefinitionsType:
+    @overridemethod
+    def GetCustomCommandLineArgs(self) -> TyperEx.TypeDefinitionsType:
         return {}
 
     # ----------------------------------------------------------------------
-    @staticmethod
+    @overridemethod
     def IsSupportedCompiler(
+        self,
         compiler: CompilerImpl,
     ) -> bool:
         # Use the file to determine if the compiler supports python files
         return compiler.IsSupported(Path(__file__))
 
     # ----------------------------------------------------------------------
-    @staticmethod
+    @overridemethod
     def IsSupportedTestItem(
+        self,
         item: Path,
     ) -> bool:
         # Don't look for explicit pytest imports, as pytest doesn't require them.
@@ -63,6 +67,7 @@ class TestParser(TestParserImpl):
         return item.is_file() and item.suffix == ".py"
 
     # ----------------------------------------------------------------------
+    @overridemethod
     def CreateInvokeCommandLine(
         self,
         compiler: CompilerImpl,
@@ -84,13 +89,13 @@ class TestParser(TestParserImpl):
         )
 
     # ----------------------------------------------------------------------
-    @classmethod
+    @overridemethod
     def Parse(
-        cls,
+        self,
         compiler: CompilerImpl,             # pylint: disable=unused-argument
         compiler_context: Dict[str, Any],
         test_data: str,
-        on_progress: Callable[              # pylint: disable: unused-argument
+        on_progress_func: Callable[         # pylint: disable=unused-argument
             [
                 int,                        # Step (0-based)
                 str,                        # Status
@@ -100,11 +105,13 @@ class TestParser(TestParserImpl):
     ) -> TestResult:
         start_time = time.time()
 
+        filename = compiler_context[IndividualInputProcessorMixin.ATTRIBUTE_NAME]
+
         # Get the individual results
         individual_results: Dict[str, SubtestResult] = {}
         num_failures = 0
 
-        for match in cls._parse_individual_regex.finditer(test_data):
+        for match in self.__class__._parse_individual_regex.finditer(test_data):  # pylint: disable=protected-access
             result = match.group("result")
 
             if result == "PASSED":
@@ -119,14 +126,14 @@ class TestParser(TestParserImpl):
 
         benchmarks: List[BenchmarkStat] = []
 
-        match = cls._parse_benchmark_content_regex.search(test_data)
+        match = self.__class__._parse_benchmark_content_regex.search(test_data)  # pylint: disable=protected-access
         if match:
             # Get the pytest and benchmark versions
-            pytest_version = cls._pytest_version_regex.search(test_data)
+            pytest_version = self.__class__._pytest_version_regex.search(test_data)  # pylint: disable=protected-access
             assert pytest_version
             pytest_version = pytest_version.group("value")
 
-            benchmark_version = cls._benchmark_version_regex.search(test_data)
+            benchmark_version = self.__class__._benchmark_version_regex.search(test_data)  # pylint: disable=protected-access
             assert benchmark_version
             benchmark_version = benchmark_version.group("value")
 
@@ -142,12 +149,10 @@ class TestParser(TestParserImpl):
                 benchmark_version,
             )
 
-            filename = compiler_context[IndividualInputProcessorMixin.ATTRIBUTE_NAME]
-
             for line_item in match.split("\n"):
                 line_item = line_item.strip()
 
-                match = cls._parse_benchmark_line_item_regex.match(line_item)
+                match = self.__class__._parse_benchmark_line_item_regex.match(line_item)  # pylint: disable=protected-access
                 assert match, line_item
 
                 benchmarks.append(
@@ -181,7 +186,7 @@ class TestParser(TestParserImpl):
             datetime.timedelta(seconds=time.time() - start_time),
             short_desc,
             individual_results or None,
-            benchmarks or None,
+            {filename.name: benchmarks} if benchmarks else None,
         )
 
     # ----------------------------------------------------------------------
