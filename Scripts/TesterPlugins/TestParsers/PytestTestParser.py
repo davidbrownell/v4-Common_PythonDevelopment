@@ -62,13 +62,22 @@ class TestParser(TestParserImpl):
         self,
         item: Path,
     ) -> bool:
-        # Don't look for explicit pytest imports, as pytest doesn't require them.
-        # Check to see that the file is a python file.
-        return (
-            item.is_file()
-            and item.suffix == ".py"
-            and "import unittest" not in item.open().read()
-        )
+        if not (item.is_file() and item.suffix == ".py"):
+            return False
+
+        is_supported = False
+
+        with item.open() as f:
+            for line in f.readlines():
+                line = line.lstrip()
+
+                if line.startswith("import unittest"):
+                    return False
+
+                if line.startswith("def test"):
+                    is_supported = True
+
+        return is_supported
 
     # ----------------------------------------------------------------------
     @overridemethod
