@@ -64,7 +64,11 @@ class TestParser(TestParserImpl):
     ) -> bool:
         # Don't look for explicit pytest imports, as pytest doesn't require them.
         # Check to see that the file is a python file.
-        return item.is_file() and item.suffix == ".py"
+        return (
+            item.is_file()
+            and item.suffix == ".py"
+            and "import unittest" not in item.open().read()
+        )
 
     # ----------------------------------------------------------------------
     @overridemethod
