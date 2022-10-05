@@ -31,7 +31,7 @@ from Common_Foundation.ContextlibEx import ExitStack
 from Common_Foundation.Shell.All import CurrentShell
 from Common_Foundation.Streams.DoneManager import DoneManager
 from Common_Foundation import SubprocessEx
-from Common_Foundation import Types
+from Common_Foundation.Types import EnsureValid, overridemethod
 
 from Common_FoundationEx.CompilerImpl.CompilerImpl import CompilerImpl
 from Common_FoundationEx.TesterPlugins.TestExecutorImpl import CoverageResult, ExecuteResult, TestExecutorImpl
@@ -39,7 +39,7 @@ from Common_FoundationEx import TyperEx
 
 
 # ----------------------------------------------------------------------
-sys.path.insert(0, str(Path(Types.EnsureValid(os.getenv("DEVELOPMENT_ENVIRONMENT_FOUNDATION"))) / "Scripts" / "Tester" / "Plugins" / "TestExecutors"))
+sys.path.insert(0, str(Path(EnsureValid(os.getenv("DEVELOPMENT_ENVIRONMENT_FOUNDATION"))) / "Scripts" / "Tester" / "Plugins" / "TestExecutors"))
 with ExitStack(lambda: sys.path.pop(0)):
     assert os.path.isdir(sys.path[0])
     from StandardTestExecutor import TestExecutor as StandardTestExecutor  # type: ignore  # pylint: disable=import-error
@@ -78,23 +78,32 @@ class TestExecutor(TestExecutorImpl):
         )
 
     # ----------------------------------------------------------------------
-    @staticmethod
-    def GetCustomCommandLineArgs() -> TyperEx.TypeDefinitionsType:
+    @overridemethod
+    def GetCustomCommandLineArgs(self) -> TyperEx.TypeDefinitionsType:
         # No custom argument support
         return {}
 
     # ----------------------------------------------------------------------
-    @staticmethod
+    @overridemethod
     def IsSupportedCompiler(
+        self,
         compiler: CompilerImpl,
     ) -> bool:
         # Use this file to determine if the compiler supports python files
         return compiler.IsSupported(Path(__file__))
 
     # ----------------------------------------------------------------------
-    @classmethod
+    @overridemethod
+    def IsSupportedTestItem(
+        self,
+        item: Path,
+    ) -> bool:
+        return item.suffix == ".py"
+
+    # ----------------------------------------------------------------------
+    @overridemethod
     def Execute(
-        cls,
+        self,
         dm: DoneManager,
         compiler: CompilerImpl,
         context: Dict[str, Any],

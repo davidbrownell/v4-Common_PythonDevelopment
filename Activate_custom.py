@@ -26,7 +26,7 @@ from Common_Foundation.Streams.DoneManager import DoneManager               # ty
 from RepositoryBootstrap import Configuration                               # type: ignore  # pylint: disable=import-error,unused-import
 from RepositoryBootstrap import Constants                                   # type: ignore  # pylint: disable=import-error,unused-import
 from RepositoryBootstrap import DataTypes                                   # type: ignore  # pylint: disable=import-error,unused-import
-from RepositoryBootstrap import DynamicPluginArchitecture                   # type: ignore  # pylint: disable=import-error,unused-import
+from RepositoryBootstrap.SetupAndActivate import DynamicPluginArchitecture  # type: ignore  # pylint: disable=import-error,unused-import
 
 
 # ----------------------------------------------------------------------

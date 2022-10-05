@@ -39,7 +39,7 @@ sys.path.insert(0, Types.EnsureValid(os.getenv("DEVELOPMENT_ENVIRONMENT_FOUNDATI
 with ExitStack(lambda: sys.path.pop(0)):
     assert os.path.isdir(sys.path[0]), sys.path[0]
 
-    from RepositoryBootstrap import Constants  # type: ignore  # pylint: disable=import-error
+    from RepositoryBootstrap import Constants as RepositoryBootstrapConstants  # type: ignore  # pylint: disable=import-error
 
 
 # ----------------------------------------------------------------------
@@ -71,9 +71,9 @@ class Configuration(object):
 def _ValidateRepoRoot(
     value: Path,
 ) -> Path:
-    if not (value / Constants.REPOSITORY_ID_FILENAME).is_file():
+    if not (value / RepositoryBootstrapConstants.REPOSITORY_ID_FILENAME).is_file():
         raise typer.BadParameter(
-            "'{}' is not a repository root ('{}' does not exist).".format(value, Constants.REPOSITORY_ID_FILENAME),
+            "'{}' is not a repository root ('{}' does not exist).".format(value, RepositoryBootstrapConstants.REPOSITORY_ID_FILENAME),
         )
 
     return value
@@ -90,12 +90,12 @@ def EntryPoint(
         output_flags=DoneManagerFlags.Create(verbose=verbose, debug=debug),
     ) as dm:
         # Get the friendly name
-        with (repo_root / Constants.REPOSITORY_ID_FILENAME).open() as f:
+        with (repo_root / RepositoryBootstrapConstants.REPOSITORY_ID_FILENAME).open() as f:
             content = f.read()
 
-        match = RegularExpression.TemplateStringToRegex(Constants.REPOSITORY_ID_CONTENT_TEMPLATE).match(content)
+        match = RegularExpression.TemplateStringToRegex(RepositoryBootstrapConstants.REPOSITORY_ID_CONTENT_TEMPLATE).match(content)
         if not match:
-            raise Exception("'{}' does not appear to be valid.".format(Constants.REPOSITORY_ID_FILENAME))
+            raise Exception("'{}' does not appear to be valid.".format(RepositoryBootstrapConstants.REPOSITORY_ID_FILENAME))
 
         friendly_name: Optional[str] = match.group("name")
 
@@ -157,7 +157,7 @@ def EntryPoint(
 def Execute(
     config: Configuration,
 ) -> Path:
-    output_dir = config.repo_root / Constants.LIBRARIES_SUBDIR / "Python" / config.library_name
+    output_dir = config.repo_root / RepositoryBootstrapConstants.LIBRARIES_SUBDIR / "Python" / config.library_name
 
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -219,7 +219,7 @@ def _GetLibraryDir(
     repo_root: Path,
     library_name: str,
 ) -> Path:
-    return repo_root / Constants.LIBRARIES_SUBDIR / "Python" / library_name
+    return repo_root / RepositoryBootstrapConstants.LIBRARIES_SUBDIR / "Python" / library_name
 
 
 # ----------------------------------------------------------------------
