@@ -115,11 +115,9 @@ class TestExecutor(TestExecutorImpl):
             ],
             bool,                           # True to continue, False to terminate
         ],
-        includes: Optional[List[str]]=None,
-        excludes: Optional[List[str]]=None,
     ) -> Tuple[ExecuteResult, str]:
-        includes = includes or []
-        excludes = excludes or []
+        includes: List[str] = []
+        excludes: List[str] = []
 
         # Get the name of the python file to execute
         args = shlex.split(command_line)
@@ -131,7 +129,7 @@ class TestExecutor(TestExecutorImpl):
         # Attempt to extract include and exclude information from the source
         disable_code_coverage = False
 
-        if not disable_code_coverage and not includes and not excludes:
+        if not disable_code_coverage:
             regex = re.compile(
                 r"""(?#
                 Header                      )^.*?(?#
@@ -185,8 +183,6 @@ class TestExecutor(TestExecutorImpl):
                 context,
                 command_line,
                 on_progress,
-                includes,
-                excludes,
             )
 
         # Attempt to determine include and exclude information based on the original filename
