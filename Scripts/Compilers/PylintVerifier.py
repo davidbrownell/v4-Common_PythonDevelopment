@@ -28,6 +28,7 @@ from typer.core import TyperGroup
 
 from Common_Foundation.Streams.DoneManager import DoneManager
 from Common_Foundation import SubprocessEx
+from Common_Foundation.Types import overridemethod
 
 from Common_FoundationEx.CompilerImpl.Verifier import CreateListCommandLineFunc, CreateVerifyCommandLineFunc, IndividualInputProcessorMixin, InputType, InvokeReason, Verifier as VerifierBase
 from Common_FoundationEx.CompilerImpl.Interfaces.IInvoker import IInvoker
@@ -60,6 +61,8 @@ class Verifier(VerifierBase, IInvoker):
 
     # ----------------------------------------------------------------------
     # |  Public Types
+    IGNORE_FILENAME                         = "PylintVerifier-ignore"
+
     DEFAULT_PASSING_SCORE                   = 9.0
 
     # Optional
@@ -91,12 +94,22 @@ class Verifier(VerifierBase, IInvoker):
         self.execute_converted_sut_files    = execute_converted_sut_files
 
     # ----------------------------------------------------------------------
+    @overridemethod
     def GetCustomCommandLineArgs(self) -> TyperEx.TypeDefinitionsType:
         return {
             self.__class__.PASSING_SCORE_ATTRIBUTE_NAME: (float, dict(min=0.0, max=10.0)),
         }
 
     # ----------------------------------------------------------------------
+    @overridemethod
+    def IsIgnoredDirectory(
+        self,
+        directory: Path,
+    ) -> bool:
+        return (directory / self.__class__.IGNORE_FILENAME).exists()
+
+    # ----------------------------------------------------------------------
+    @overridemethod
     def IsSupported(  # pylint: disable=arguments-renamed
         self,
         filename: Path,
@@ -104,6 +117,7 @@ class Verifier(VerifierBase, IInvoker):
         return filename.suffix == ".py"
 
     # ----------------------------------------------------------------------
+    @overridemethod
     def IsSupportedTestItem(
         self,
         item: Path,
@@ -117,6 +131,7 @@ class Verifier(VerifierBase, IInvoker):
         return super(Verifier, self).IsSupportedTestItem(item)
 
     # ----------------------------------------------------------------------
+    @overridemethod
     def ItemToTestName(
         self,
         item: Path,
@@ -143,6 +158,7 @@ class Verifier(VerifierBase, IInvoker):
     # ----------------------------------------------------------------------
     _TestItemToName_regex: Optional[Pattern]            = None
 
+    @overridemethod
     def TestItemToName(
         self,
         item: Path,
@@ -189,11 +205,13 @@ class Verifier(VerifierBase, IInvoker):
     # ----------------------------------------------------------------------
     # ----------------------------------------------------------------------
     # ----------------------------------------------------------------------
+    @overridemethod
     def _EnumerateOptionalMetadata(self) -> Generator[Tuple[str, Any], None, None]:
         yield self.__class__.PASSING_SCORE_ATTRIBUTE_NAME, None
         yield from super(Verifier, self)._EnumerateOptionalMetadata()
 
     # ----------------------------------------------------------------------
+    @overridemethod
     def _CreateContext(
         self,
         dm: DoneManager,
@@ -208,6 +226,7 @@ class Verifier(VerifierBase, IInvoker):
         return super(Verifier, self)._CreateContext(dm, metadata)
 
     # ----------------------------------------------------------------------
+    @overridemethod
     def _GetNumStepsImpl(
         self,
         context: Dict[str, Any],  # pylint: disable=unused-argument
@@ -215,6 +234,7 @@ class Verifier(VerifierBase, IInvoker):
         return len(self.__class__.Steps)
 
     # ----------------------------------------------------------------------
+    @overridemethod
     def _InvokeImpl(
         self,
         invoke_reason: InvokeReason,  # pylint: disable=unused-argument
@@ -265,7 +285,11 @@ class Verifier(VerifierBase, IInvoker):
 
             return "Skipped (test item)"
 
-        # Find the configuration value
+        if (filename.parent / self.__class__.IGNORE_FILENAME).exists():
+            dm.WriteInfo("The file '{}' has been ignored due to '{}'.".format(filename, self.__class__.IGNORE_FILENAME))
+            return "Skipped (ignored)"
+
+        # Find the configuration file
         configuration_filename: Optional[Path] = None
 
         on_progress_func(self.__class__.Steps.CalculatingConfiguration.value, "Calculating configuration")
