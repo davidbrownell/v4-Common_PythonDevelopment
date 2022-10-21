@@ -27,3 +27,5 @@ coverage.xml
 
 # ----------------------------------------------------------------------
 .pylintrc
+
+Libraries/Python/Common_PythonDevelopment/src/Common_PythonDevelopment.egg-info/*
