@@ -129,7 +129,7 @@ class TestParser(TestParserImpl):
 
             if result == "PASSED":
                 result = 0
-            elif result == "FAILED":
+            elif result in ["FAILED", "ERROR"]:
                 result = -1
                 num_failures += 1
             else:
