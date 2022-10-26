@@ -210,7 +210,7 @@ class TestParser(TestParserImpl):
         Start of line                       )^(?#
         Filename                            )(?P<filename>.+\.py)(?#
         Sep                                 )::(?#
-        Test                                )(?P<test>.+) +(?#
+        Test                                )(?P<test>\S+) +(?#
         Potential multiline output          )(?:[^\n]*\n)*?(?#
         Result                              )(?P<result>[A-Z]+$)(?#
         End of line                         )$(?#
