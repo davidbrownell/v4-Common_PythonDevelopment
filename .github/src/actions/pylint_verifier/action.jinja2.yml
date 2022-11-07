@@ -1,0 +1,34 @@
+# ----------------------------------------------------------------------
+# |
+# |  action.yml
+# |
+# |  David Brownell <db@DavidBrownell.com>
+# |      2022-10-31 14:47:15
+# |
+# ----------------------------------------------------------------------
+# |
+# |  Copyright David Brownell 2022
+# |  Distributed under the Boost Software License, Version 1.0. See
+# |  accompanying file LICENSE_1_0.txt or copy at
+# |  http://www.boost.org/LICENSE_1_0.txt.
+# |
+# ----------------------------------------------------------------------
+name: PylintVerifier
+description: Runs `PylintVerifier` on the repository.
+
+inputs:
+  os:                                       {type: string, required: true}
+  configuration:                            {type: string, required: true}
+
+  script_extension:                         {type: string, required: true}
+  shell_name:                               {type: string, required: true}
+  working_dir:                              {type: string, required: true}
+
+  activate_statement:                       {type: string, required: true}
+
+runs:
+  using: composite
+  steps:
+    - name: "PylintVerifier"
+      run: ${{ inputs.activate_statement }} && PylintVerifier${{ inputs.script_extension }} Verify . --debug
+      shell: ${{ inputs.shell_name }}
