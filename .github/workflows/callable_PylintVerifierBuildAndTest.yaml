@@ -1,0 +1,422 @@
+name: callable_PylintVerifierBuildAndTest
+
+
+# Sample implementation in the calling workflow:
+#
+# name: SampleWorkflow
+# run-name: ${{ github.run_number }} [${{ github.actor }}] on ${{ github.ref_name }}
+#
+# on:
+#   pull_request:
+#     branches:
+#       - main
+#   push:
+#     branches:
+#       - main
+#   workflow_dispatch:
+#
+# jobs:
+#   <repo_name_here>:
+#     strategy:
+#       matrix:
+#         os:
+#           - ubuntu-latest
+#           - windows-latest
+#
+#         configuration:
+#           # Enter repository configurations here, or "None" (without quotes) for repositories that aren't configurable
+#           - Enter_a_valid_configuration_name_here
+#
+#     uses: /davidbrownell/v4-Common_Foundation/.github/workflows/callable_BuildAndTest.yaml@CI-v1.0.0
+#     with:
+#       os:                                   ${{ matrix.os }}
+#       configuration:                        ${{ matrix.configuration }}
+#
+#       checkout_source:                      true
+#
+#       run_Builder:                          true
+#
+#       # Use the following values to control how different test types are run:
+#       #
+#       #   0: Do not run these test types
+#       #   1: Run these test types without code coverage
+#       #   2: Run these test types with code coverage
+#       #   3: Run these test types with and without code coverage
+#
+#       execute_UnitTests:                    3
+#       execute_FunctionalTests:              1
+#       execute_IntegrationTests:             1
+#       execute_SystemTests:                  1
+#       execute_LocalEndToEndTests:           1
+#       execute_EndToEndTests:                0
+#       execute_BuildVerificationTests:       0
+#       execute_PerformanceTests:             0
+
+on:
+  workflow_call:
+    inputs:
+      # ----------------------------------------------------------------------
+      # |  Misc
+      os:
+        type: string
+        description: Operating system.
+        required: true
+
+      configuration:
+        type: string
+        description: "Name of the configuration to use when setting up and activating the environment (specify the 'None' string value for repositories that aren't configurable)."
+        required: true
+
+      # ----------------------------------------------------------------------
+      #  Source Code
+      checkout_source:
+        type: boolean
+        description: "True to checkout the source."
+        required: true
+
+      # ----------------------------------------------------------------------
+      #  Builder
+      run_Builder:                          {type: boolean, default: true, required: true}
+
+      # ----------------------------------------------------------------------
+      #  Test Types
+
+      # These tests will run by default
+      execute_UnitTests:                    {type: number, default: 3, required: true} # Run with code coverage
+      execute_FunctionalTests:              {type: number, default: 1, required: true}
+      execute_IntegrationTests:             {type: number, default: 1, required: true}
+      execute_SystemTests:                  {type: number, default: 1, required: true}
+      execute_LocalEndToEndTests:           {type: number, default: 1, required: true}
+
+      # These tests will not run by default
+      execute_EndToEndTests:                {type: number, default: 0, required: true}
+      execute_BuildVerificationTests:       {type: number, default: 0, required: true}
+      execute_PerformanceTests:             {type: number, default: 0, required: true}
+
+      # ----------------------------------------------------------------------
+      # |  Child Inputs
+      run_PylintVerifier:                   {type: boolean, default: true, required: true}
+
+jobs:
+  BuildAndTestJob:
+    runs-on: ${{ inputs.os }}
+
+    env:
+      COLUMNS:                                          "200"
+      SIMULATE_TERMINAL_CAPABILITIES_SUPPORTS_COLORS:   "1"
+      PYTHONIOENCODING:                                 "UTF-8"
+
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v3
+        if: ${{ inputs.checkout_source == true || inputs.checkout_source == 'true' }}
+
+      - name: "[Impl] Initialize OS-Specific Variables"
+        id: initialize
+        uses: davidbrownell/v4-Common_Foundation/.github/actions/initialize@CI-v1.0.0
+        with:
+          os:                               ${{ inputs.os }}
+
+      - name: Setup
+        uses: davidbrownell/v4-Common_Foundation/.github/actions/setup@CI-v1.0.0
+        with:
+          os:                               ${{ inputs.os }}
+          configuration:                    ${{ inputs.configuration }}
+
+          local_script_prefix:              ${{ steps.initialize.outputs.local_script_prefix }}
+          script_extension:                 ${{ steps.initialize.outputs.script_extension }}
+          shell_name:                       ${{ steps.initialize.outputs.shell_name }}
+          sudo_command:                     ${{ steps.initialize.outputs.sudo_command }}
+          working_dir:                      ${{ steps.initialize.outputs.working_dir }}
+
+      - name: Activate
+        id: activate
+        uses: davidbrownell/v4-Common_Foundation/.github/actions/activate@CI-v1.0.0
+        with:
+          os:                               ${{ inputs.os }}
+          configuration:                    ${{ inputs.configuration }}
+          shell_name:                       ${{ steps.initialize.outputs.shell_name }}
+
+      - name: PylintVerifier
+        uses: davidbrownell/v4-Common_PythonDevelopment/.github/actions/pylint_verifier@CI-v1.0.0
+        if: ${{ inputs.run_PylintVerifier == true || inputs.run_PylintVerifier == 'true' }}
+        with:
+          os:                               ${{ inputs.os }}
+          configuration:                    ${{ inputs.configuration }}
+
+          script_extension:                 ${{ steps.initialize.outputs.script_extension }}
+          shell_name:                       ${{ steps.initialize.outputs.shell_name }}
+          working_dir:                      ${{ steps.initialize.outputs.working_dir }}
+
+          activate_statement:               ${{ steps.activate.outputs.activate_statement }}
+
+      - name: Builder
+        uses: davidbrownell/v4-Common_Foundation/.github/actions/builder@CI-v1.0.0
+        if: ${{ inputs.run_Builder == true || inputs.run_Builder == 'true' }}
+        with:
+          os:                               ${{ inputs.os }}
+          configuration:                    ${{ inputs.configuration }}
+
+          script_extension:                 ${{ steps.initialize.outputs.script_extension }}
+          shell_name:                       ${{ steps.initialize.outputs.shell_name }}
+          working_dir:                      ${{ steps.initialize.outputs.working_dir }}
+
+          activate_statement:               ${{ steps.activate.outputs.activate_statement }}
+
+      - name: Tester (UnitTests)
+        uses: davidbrownell/v4-Common_Foundation/.github/actions/tester@CI-v1.0.0
+        if: ${{ inputs.execute_UnitTests == 1 || inputs.execute_UnitTests == 3 }}
+        with:
+          os:                               ${{ inputs.os }}
+          configuration:                    ${{ inputs.configuration }}
+
+          script_extension:                 ${{ steps.initialize.outputs.script_extension }}
+          shell_name:                       ${{ steps.initialize.outputs.shell_name }}
+          working_dir:                      ${{ steps.initialize.outputs.working_dir }}
+
+          activate_statement:               ${{ steps.activate.outputs.activate_statement }}
+
+          test_type:                        UnitTests
+          code_coverage:                    false
+
+      - name: Tester (FunctionalTests)
+        uses: davidbrownell/v4-Common_Foundation/.github/actions/tester@CI-v1.0.0
+        if: ${{ inputs.execute_FunctionalTests == 1 || inputs.execute_FunctionalTests == 3 }}
+        with:
+          os:                               ${{ inputs.os }}
+          configuration:                    ${{ inputs.configuration }}
+
+          script_extension:                 ${{ steps.initialize.outputs.script_extension }}
+          shell_name:                       ${{ steps.initialize.outputs.shell_name }}
+          working_dir:                      ${{ steps.initialize.outputs.working_dir }}
+
+          activate_statement:               ${{ steps.activate.outputs.activate_statement }}
+
+          test_type:                        FunctionalTests
+          code_coverage:                    false
+
+      - name: Tester (IntegrationTests)
+        uses: davidbrownell/v4-Common_Foundation/.github/actions/tester@CI-v1.0.0
+        if: ${{ inputs.execute_IntegrationTests == 1 || inputs.execute_IntegrationTests == 3 }}
+        with:
+          os:                               ${{ inputs.os }}
+          configuration:                    ${{ inputs.configuration }}
+
+          script_extension:                 ${{ steps.initialize.outputs.script_extension }}
+          shell_name:                       ${{ steps.initialize.outputs.shell_name }}
+          working_dir:                      ${{ steps.initialize.outputs.working_dir }}
+
+          activate_statement:               ${{ steps.activate.outputs.activate_statement }}
+
+          test_type:                        IntegrationTests
+          code_coverage:                    false
+
+      - name: Tester (SystemTests)
+        uses: davidbrownell/v4-Common_Foundation/.github/actions/tester@CI-v1.0.0
+        if: ${{ inputs.execute_SystemTests == 1 || inputs.execute_SystemTests == 3 }}
+        with:
+          os:                               ${{ inputs.os }}
+          configuration:                    ${{ inputs.configuration }}
+
+          script_extension:                 ${{ steps.initialize.outputs.script_extension }}
+          shell_name:                       ${{ steps.initialize.outputs.shell_name }}
+          working_dir:                      ${{ steps.initialize.outputs.working_dir }}
+
+          activate_statement:               ${{ steps.activate.outputs.activate_statement }}
+
+          test_type:                        SystemTests
+          code_coverage:                    false
+
+      - name: Tester (LocalEndToEndTests)
+        uses: davidbrownell/v4-Common_Foundation/.github/actions/tester@CI-v1.0.0
+        if: ${{ inputs.execute_LocalEndToEndTests == 1 || inputs.execute_LocalEndToEndTests == 3 }}
+        with:
+          os:                               ${{ inputs.os }}
+          configuration:                    ${{ inputs.configuration }}
+
+          script_extension:                 ${{ steps.initialize.outputs.script_extension }}
+          shell_name:                       ${{ steps.initialize.outputs.shell_name }}
+          working_dir:                      ${{ steps.initialize.outputs.working_dir }}
+
+          activate_statement:               ${{ steps.activate.outputs.activate_statement }}
+
+          test_type:                        LocalEndToEndTests
+          code_coverage:                    false
+
+      - name: Tester (EndToEndTests)
+        uses: davidbrownell/v4-Common_Foundation/.github/actions/tester@CI-v1.0.0
+        if: ${{ inputs.execute_EndToEndTests == 1 || inputs.execute_EndToEndTests == 3 }}
+        with:
+          os:                               ${{ inputs.os }}
+          configuration:                    ${{ inputs.configuration }}
+
+          script_extension:                 ${{ steps.initialize.outputs.script_extension }}
+          shell_name:                       ${{ steps.initialize.outputs.shell_name }}
+          working_dir:                      ${{ steps.initialize.outputs.working_dir }}
+
+          activate_statement:               ${{ steps.activate.outputs.activate_statement }}
+
+          test_type:                        EndToEndTests
+          code_coverage:                    false
+
+      - name: Tester (BuildVerificationTests)
+        uses: davidbrownell/v4-Common_Foundation/.github/actions/tester@CI-v1.0.0
+        if: ${{ inputs.execute_BuildVerificationTests == 1 || inputs.execute_BuildVerificationTests == 3 }}
+        with:
+          os:                               ${{ inputs.os }}
+          configuration:                    ${{ inputs.configuration }}
+
+          script_extension:                 ${{ steps.initialize.outputs.script_extension }}
+          shell_name:                       ${{ steps.initialize.outputs.shell_name }}
+          working_dir:                      ${{ steps.initialize.outputs.working_dir }}
+
+          activate_statement:               ${{ steps.activate.outputs.activate_statement }}
+
+          test_type:                        BuildVerificationTests
+          code_coverage:                    false
+
+      - name: Tester (PerformanceTests)
+        uses: davidbrownell/v4-Common_Foundation/.github/actions/tester@CI-v1.0.0
+        if: ${{ inputs.execute_PerformanceTests == 1 || inputs.execute_PerformanceTests == 3 }}
+        with:
+          os:                               ${{ inputs.os }}
+          configuration:                    ${{ inputs.configuration }}
+
+          script_extension:                 ${{ steps.initialize.outputs.script_extension }}
+          shell_name:                       ${{ steps.initialize.outputs.shell_name }}
+          working_dir:                      ${{ steps.initialize.outputs.working_dir }}
+
+          activate_statement:               ${{ steps.activate.outputs.activate_statement }}
+
+          test_type:                        PerformanceTests
+          code_coverage:                    false
+
+      - name: Tester (UnitTests, Code Coverage)
+        uses: davidbrownell/v4-Common_Foundation/.github/actions/tester@CI-v1.0.0
+        if: ${{ inputs.execute_UnitTests == 2 || inputs.execute_UnitTests == 3 }}
+        with:
+          os:                               ${{ inputs.os }}
+          configuration:                    ${{ inputs.configuration }}
+
+          script_extension:                 ${{ steps.initialize.outputs.script_extension }}
+          shell_name:                       ${{ steps.initialize.outputs.shell_name }}
+          working_dir:                      ${{ steps.initialize.outputs.working_dir }}
+
+          activate_statement:               ${{ steps.activate.outputs.activate_statement }}
+
+          test_type:                        UnitTests
+          code_coverage:                    true
+
+      - name: Tester (FunctionalTests, Code Coverage)
+        uses: davidbrownell/v4-Common_Foundation/.github/actions/tester@CI-v1.0.0
+        if: ${{ inputs.execute_FunctionalTests == 2 || inputs.execute_FunctionalTests == 3 }}
+        with:
+          os:                               ${{ inputs.os }}
+          configuration:                    ${{ inputs.configuration }}
+
+          script_extension:                 ${{ steps.initialize.outputs.script_extension }}
+          shell_name:                       ${{ steps.initialize.outputs.shell_name }}
+          working_dir:                      ${{ steps.initialize.outputs.working_dir }}
+
+          activate_statement:               ${{ steps.activate.outputs.activate_statement }}
+
+          test_type:                        FunctionalTests
+          code_coverage:                    true
+
+      - name: Tester (IntegrationTests, Code Coverage)
+        uses: davidbrownell/v4-Common_Foundation/.github/actions/tester@CI-v1.0.0
+        if: ${{ inputs.execute_IntegrationTests == 2 || inputs.execute_IntegrationTests == 3 }}
+        with:
+          os:                               ${{ inputs.os }}
+          configuration:                    ${{ inputs.configuration }}
+
+          script_extension:                 ${{ steps.initialize.outputs.script_extension }}
+          shell_name:                       ${{ steps.initialize.outputs.shell_name }}
+          working_dir:                      ${{ steps.initialize.outputs.working_dir }}
+
+          activate_statement:               ${{ steps.activate.outputs.activate_statement }}
+
+          test_type:                        IntegrationTests
+          code_coverage:                    true
+
+      - name: Tester (SystemTests, Code Coverage)
+        uses: davidbrownell/v4-Common_Foundation/.github/actions/tester@CI-v1.0.0
+        if: ${{ inputs.execute_SystemTests == 2 || inputs.execute_SystemTests == 3 }}
+        with:
+          os:                               ${{ inputs.os }}
+          configuration:                    ${{ inputs.configuration }}
+
+          script_extension:                 ${{ steps.initialize.outputs.script_extension }}
+          shell_name:                       ${{ steps.initialize.outputs.shell_name }}
+          working_dir:                      ${{ steps.initialize.outputs.working_dir }}
+
+          activate_statement:               ${{ steps.activate.outputs.activate_statement }}
+
+          test_type:                        SystemTests
+          code_coverage:                    true
+
+      - name: Tester (LocalEndToEndTests, Code Coverage)
+        uses: davidbrownell/v4-Common_Foundation/.github/actions/tester@CI-v1.0.0
+        if: ${{ inputs.execute_LocalEndToEndTests == 2 || inputs.execute_LocalEndToEndTests == 3 }}
+        with:
+          os:                               ${{ inputs.os }}
+          configuration:                    ${{ inputs.configuration }}
+
+          script_extension:                 ${{ steps.initialize.outputs.script_extension }}
+          shell_name:                       ${{ steps.initialize.outputs.shell_name }}
+          working_dir:                      ${{ steps.initialize.outputs.working_dir }}
+
+          activate_statement:               ${{ steps.activate.outputs.activate_statement }}
+
+          test_type:                        LocalEndToEndTests
+          code_coverage:                    true
+
+      - name: Tester (EndToEndTests, Code Coverage)
+        uses: davidbrownell/v4-Common_Foundation/.github/actions/tester@CI-v1.0.0
+        if: ${{ inputs.execute_EndToEndTests == 2 || inputs.execute_EndToEndTests == 3 }}
+        with:
+          os:                               ${{ inputs.os }}
+          configuration:                    ${{ inputs.configuration }}
+
+          script_extension:                 ${{ steps.initialize.outputs.script_extension }}
+          shell_name:                       ${{ steps.initialize.outputs.shell_name }}
+          working_dir:                      ${{ steps.initialize.outputs.working_dir }}
+
+          activate_statement:               ${{ steps.activate.outputs.activate_statement }}
+
+          test_type:                        EndToEndTests
+          code_coverage:                    true
+
+      - name: Tester (BuildVerificationTests, Code Coverage)
+        uses: davidbrownell/v4-Common_Foundation/.github/actions/tester@CI-v1.0.0
+        if: ${{ inputs.execute_BuildVerificationTests == 2 || inputs.execute_BuildVerificationTests == 3 }}
+        with:
+          os:                               ${{ inputs.os }}
+          configuration:                    ${{ inputs.configuration }}
+
+          script_extension:                 ${{ steps.initialize.outputs.script_extension }}
+          shell_name:                       ${{ steps.initialize.outputs.shell_name }}
+          working_dir:                      ${{ steps.initialize.outputs.working_dir }}
+
+          activate_statement:               ${{ steps.activate.outputs.activate_statement }}
+
+          test_type:                        BuildVerificationTests
+          code_coverage:                    true
+
+      - name: Tester (PerformanceTests, Code Coverage)
+        uses: davidbrownell/v4-Common_Foundation/.github/actions/tester@CI-v1.0.0
+        if: ${{ inputs.execute_PerformanceTests == 2 || inputs.execute_PerformanceTests == 3 }}
+        with:
+          os:                               ${{ inputs.os }}
+          configuration:                    ${{ inputs.configuration }}
+
+          script_extension:                 ${{ steps.initialize.outputs.script_extension }}
+          shell_name:                       ${{ steps.initialize.outputs.shell_name }}
+          working_dir:                      ${{ steps.initialize.outputs.working_dir }}
+
+          activate_statement:               ${{ steps.activate.outputs.activate_statement }}
+
+          test_type:                        PerformanceTests
+          code_coverage:                    true
+
+
