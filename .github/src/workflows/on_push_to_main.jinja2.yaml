@@ -33,7 +33,7 @@ jobs:
   Common_PythonDevelopmentBugBug:
     uses: ./.github/workflows/exercise_main.yaml
     with:
-      branch_overrides: "v4-Common_PythonDevelopment:${{ github.ref_name }}"
+      setup_branch_overrides: "v4-Common_PythonDevelopment:${{ github.ref_name }}"
       subject_repo_name: "davidbrownell/v4-Common_PythonDevelopment"
 
   # ----------------------------------------------------------------------
