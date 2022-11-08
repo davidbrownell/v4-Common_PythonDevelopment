@@ -93,7 +93,7 @@ if [[ ${should_continue} == 1 ]]; then
         echo ""
 
         # BugBug git clone -b release https://github.com/davidbrownell/v4-Common_Foundation.git "$1/Common/Foundation.tmp"
-        git clone -b davidbrownell_releaseCI https://github.com/davidbrownell/v4-Common_Foundation.git "$1/Common/Foundation.tmp"
+        git clone -b davidbrownell_main https://github.com/davidbrownell/v4-Common_Foundation.git "$1/Common/Foundation.tmp"
         mv "$1/Common/Foundation.tmp" "$1/Common/Foundation"
 
         echo ""
