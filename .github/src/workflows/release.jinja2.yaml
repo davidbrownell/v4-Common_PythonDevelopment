@@ -1,9 +1,9 @@
 # ----------------------------------------------------------------------
 # |
-# |  main.yaml
+# |  release.yaml
 # |
 # |  David Brownell <db@DavidBrownell.com>
-# |      2022-10-31 14:48:55
+# |      2022-11-07 14:40:15
 # |
 # ----------------------------------------------------------------------
 # |
@@ -13,11 +13,11 @@
 # |  http://www.boost.org/LICENSE_1_0.txt.
 # |
 # ----------------------------------------------------------------------
-name: main
+name: release
 run-name: ${{ github.run_number }} [${{ github.actor }}] on ${{ github.ref_name }}
 
 on:
-  pull_request:
+  push:
     branches:
       - main
   workflow_dispatch:
@@ -25,3 +25,20 @@ on:
 jobs:
   Common_PythonDevelopment:
     uses: ./.github/workflows/callable_main.yaml
+    with:
+      branch_overrides: "v4-Common_PythonDevelopment:main"
+      subject_repo_name: "davidbrownell/v4-Common_PythonDevelopment"
+
+  Common_PythonDevelopmentBugBug:
+    uses: ./.github/workflows/callable_main.yaml
+    with:
+      branch_overrides: "v4-Common_PythonDevelopment:main"
+      subject_repo_name: "davidbrownell/v4-Common_PythonDevelopment"
+
+  # ----------------------------------------------------------------------
+  Promote:
+    needs:
+      - Common_PythonDevelopment
+      - Common_PythonDevelopmentBugBug
+
+    uses: davidbrownell/v4-Common_Foundation/.github/workflows/callable_release.yaml@CI-vBugBug

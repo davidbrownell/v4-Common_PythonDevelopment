@@ -1,4 +1,19 @@
-name: callable_PylintVerifierBuildAndTest
+# ----------------------------------------------------------------------
+# |
+# |  callable_mainImpl.jinja2.yaml
+# |
+# |  David Brownell <db@DavidBrownell.com>
+# |      2022-11-07 14:35:08
+# |
+# ----------------------------------------------------------------------
+# |
+# |  Copyright David Brownell 2022
+# |  Distributed under the Boost Software License, Version 1.0. See
+# |  accompanying file LICENSE_1_0.txt or copy at
+# |  http://www.boost.org/LICENSE_1_0.txt.
+# |
+# ----------------------------------------------------------------------
+name: callable_mainImpl
 
 <<% extends "{}/.github/src/_BuildAndTest.template.yaml".format("DEVELOPMENT_ENVIRONMENT_FOUNDATION" | env) %>>
 
@@ -8,7 +23,7 @@ name: callable_PylintVerifierBuildAndTest
 
 <<% block prologue_steps %>>
       - name: PylintVerifier
-        uses: davidbrownell/v4-Common_PythonDevelopment/.github/actions/pylint_verifier@CI-v1.0.0
+        uses: davidbrownell/v4-Common_PythonDevelopment/.github/actions/pylint_verifier@CI-vBugBug
         if: ${{ inputs.run_PylintVerifier == true || inputs.run_PylintVerifier == 'true' }}
         with:
           os:                               ${{ inputs.os }}
