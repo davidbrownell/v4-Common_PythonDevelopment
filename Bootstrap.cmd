@@ -121,7 +121,7 @@ if not exist "%_COMMON_CODE_ABSOLUTE_DIR%\Common\Foundation" (
     echo.
 
     REM BugBug git clone -b release https://github.com/davidbrownell/v4-Common_Foundation.git "%_COMMON_CODE_ABSOLUTE_DIR%\Common\Foundation.tmp"
-    git clone -b davidbrownell_releaseCI https://github.com/davidbrownell/v4-Common_Foundation.git "%_COMMON_CODE_ABSOLUTE_DIR%\Common\Foundation.tmp"
+    git clone -b davidbrownell_main https://github.com/davidbrownell/v4-Common_Foundation.git "%_COMMON_CODE_ABSOLUTE_DIR%\Common\Foundation.tmp"
     if %ERRORLEVEL% NEQ 0 (
         set _ERRORLEVEL=%ERRORLEVEL%
         goto Exit
