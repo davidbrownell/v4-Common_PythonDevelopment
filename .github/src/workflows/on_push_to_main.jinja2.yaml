@@ -1,6 +1,6 @@
 # ----------------------------------------------------------------------
 # |
-# |  release.yaml
+# |  on_push_to_main.yaml
 # |
 # |  David Brownell <db@DavidBrownell.com>
 # |      2022-11-07 14:40:15
@@ -13,26 +13,27 @@
 # |  http://www.boost.org/LICENSE_1_0.txt.
 # |
 # ----------------------------------------------------------------------
-name: release
-run-name: ${{ github.run_number }} [${{ github.actor }}] on ${{ github.ref_name }}
+name: OnPush (main)
+run-name: ${{ github.run_number }} [${{ github.actor }}] on ${{ github.ref_name }} # BugBug: Change this
 
 on:
   push:
     branches:
       - main
+      - davidbrownell_main # BugBug
   workflow_dispatch:
 
 jobs:
   Common_PythonDevelopment:
-    uses: ./.github/workflows/callable_main.yaml
+    uses: ./.github/workflows/exercise_main.yaml
     with:
-      branch_overrides: "v4-Common_PythonDevelopment:main"
+      setup_branch_overrides: "v4-Common_PythonDevelopment:${{ github.base_ref }}"
       subject_repo_name: "davidbrownell/v4-Common_PythonDevelopment"
 
   Common_PythonDevelopmentBugBug:
-    uses: ./.github/workflows/callable_main.yaml
+    uses: ./.github/workflows/exercise_main.yaml
     with:
-      branch_overrides: "v4-Common_PythonDevelopment:main"
+      branch_overrides: "v4-Common_PythonDevelopment:${{ github.base_ref }}"
       subject_repo_name: "davidbrownell/v4-Common_PythonDevelopment"
 
   # ----------------------------------------------------------------------
@@ -41,4 +42,4 @@ jobs:
       - Common_PythonDevelopment
       - Common_PythonDevelopmentBugBug
 
-    uses: davidbrownell/v4-Common_Foundation/.github/workflows/callable_release.yaml@CI-vBugBug
+    uses: davidbrownell/v4-Common_Foundation/.github/workflows/callable_promote_to_release.yaml@CI-vBugBug

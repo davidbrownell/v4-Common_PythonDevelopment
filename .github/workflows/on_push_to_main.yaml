@@ -8,8 +8,8 @@
 # this one.
 #
 #     Code Generator:         Jinja2
-#     Input Filename:         actions/pylint_verifier/action.jinja2.yml
-#     Generated Date:         2022-11-08 13:56:19.210768
+#     Input Filename:         workflows/on_push_to_main.jinja2.yaml
+#     Generated Date:         2022-11-08 13:56:19.227161
 #
 # ----------------------------------------------------------------------
 # ----------------------------------------------------------------------
@@ -17,10 +17,10 @@
 
 # ----------------------------------------------------------------------
 # |
-# |  action.yml
+# |  on_push_to_main.yaml
 # |
 # |  David Brownell <db@DavidBrownell.com>
-# |      2022-10-31 14:47:15
+# |      2022-11-07 14:40:15
 # |
 # ----------------------------------------------------------------------
 # |
@@ -30,22 +30,33 @@
 # |  http://www.boost.org/LICENSE_1_0.txt.
 # |
 # ----------------------------------------------------------------------
-name: PylintVerifier
-description: Runs `PylintVerifier` on the repository.
+name: OnPush (main)
+run-name: ${{ github.run_number }} [${{ github.actor }}] on ${{ github.ref_name }} # BugBug: Change this
 
-inputs:
-  os:                                       {type: string, required: true}
-  configuration:                            {type: string, required: true}
+on:
+  push:
+    branches:
+      - main
+      - davidbrownell_main # BugBug
+  workflow_dispatch:
 
-  script_extension:                         {type: string, required: true}
-  shell_name:                               {type: string, required: true}
-  working_dir:                              {type: string, required: true}
+jobs:
+  Common_PythonDevelopment:
+    uses: ./.github/workflows/exercise_main.yaml
+    with:
+      setup_branch_overrides: "v4-Common_PythonDevelopment:${{ github.base_ref }}"
+      subject_repo_name: "davidbrownell/v4-Common_PythonDevelopment"
 
-  activate_statement:                       {type: string, required: true}
+  Common_PythonDevelopmentBugBug:
+    uses: ./.github/workflows/exercise_main.yaml
+    with:
+      branch_overrides: "v4-Common_PythonDevelopment:${{ github.base_ref }}"
+      subject_repo_name: "davidbrownell/v4-Common_PythonDevelopment"
 
-runs:
-  using: composite
-  steps:
-    - name: "PylintVerifier"
-      run: ${{ inputs.activate_statement }} && PylintVerifier${{ inputs.script_extension }} Verify . --debug
-      shell: ${{ inputs.shell_name }}
+  # ----------------------------------------------------------------------
+  Promote:
+    needs:
+      - Common_PythonDevelopment
+      - Common_PythonDevelopmentBugBug
+
+    uses: davidbrownell/v4-Common_Foundation/.github/workflows/callable_promote_to_release.yaml@CI-vBugBug

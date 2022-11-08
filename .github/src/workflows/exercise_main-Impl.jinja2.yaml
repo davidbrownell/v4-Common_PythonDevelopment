@@ -1,6 +1,6 @@
 # ----------------------------------------------------------------------
 # |
-# |  callable_mainImpl.jinja2.yaml
+# |  exercise_main-Impl.jinja2.yaml
 # |
 # |  David Brownell <db@DavidBrownell.com>
 # |      2022-11-07 14:35:08
@@ -13,8 +13,6 @@
 # |  http://www.boost.org/LICENSE_1_0.txt.
 # |
 # ----------------------------------------------------------------------
-name: callable_mainImpl
-
 <<% extends "{}/.github/src/_BuildAndTest.template.yaml".format("DEVELOPMENT_ENVIRONMENT_FOUNDATION" | env) %>>
 
 <<% block inputs %>>

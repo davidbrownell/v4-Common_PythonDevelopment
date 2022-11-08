@@ -1,6 +1,23 @@
 # ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
+#
+# This file is the result of a code generation process; any changes made
+# to this file will be overwritten during the next code generation
+# invocation. Any changes MUST be made in the source file rather than in
+# this one.
+#
+#     Code Generator:         Jinja2
+#     Input Filename:         workflows/exercise_main-Impl.jinja2.yaml
+#     Generated Date:         2022-11-08 13:56:19.213091
+#
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
+
+# ----------------------------------------------------------------------
 # |
-# |  callable_mainImpl.jinja2.yaml
+# |  exercise_main-Impl.jinja2.yaml
 # |
 # |  David Brownell <db@DavidBrownell.com>
 # |      2022-11-07 14:35:08
@@ -13,8 +30,6 @@
 # |  http://www.boost.org/LICENSE_1_0.txt.
 # |
 # ----------------------------------------------------------------------
-name: callable_mainImpl
-
 
 # Sample implementation in the calling workflow:
 #
@@ -72,7 +87,7 @@ on:
     inputs:
       # ----------------------------------------------------------------------
       # |  Misc
-      branch_overrides:
+      setup_branch_overrides:
         type: string
         required: false
         description: BugBug
@@ -159,6 +174,8 @@ jobs:
         id: checkout_source
         uses: davidbrownell/v4-Common_Foundation/.github/actions/checkout_source@CI-vBugBug
         with:
+          bugbug_test:                      ${{ steps.initialize.outputs.bugbug_test }}
+
           subject_repo_name:                ${{ inputs.subject_repo_name }}
           subject_repo_branch:              ${{ inputs.subject_repo_branch }}
 
@@ -173,7 +190,7 @@ jobs:
         with:
           repo_name:                        ${{ steps.checkout_source.outputs.repo_name }}
           repo_dir:                         ${{ steps.checkout_source.outputs.repo_dir }}
-          branch_overrides:                 ${{ inputs.branch_overrides }}
+          branch_overrides:                 ${{ inputs.setup_branch_overrides }}
 
           os:                               ${{ inputs.os }}
           configuration:                    ${{ inputs.configuration }}
