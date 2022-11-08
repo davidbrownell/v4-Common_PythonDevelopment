@@ -9,7 +9,7 @@
 #
 #     Code Generator:         Jinja2
 #     Input Filename:         workflows/on_push_to_main.jinja2.yaml
-#     Generated Date:         2022-11-08 14:38:43.545796
+#     Generated Date:         2022-11-08 14:47:05.359700
 #
 # ----------------------------------------------------------------------
 # ----------------------------------------------------------------------
@@ -36,7 +36,7 @@ run-name: ${{ github.run_number }} [${{ github.actor }}] on ${{ github.ref_name 
 on:
   push:
     branches:
-      - main
+      # BugBug - main
       - davidbrownell_main # BugBug
   workflow_dispatch:
 
@@ -60,3 +60,6 @@ jobs:
       - Common_PythonDevelopmentBugBug
 
     uses: davidbrownell/v4-Common_Foundation/.github/workflows/callable_promote_to_release.yaml@CI-vBugBug
+    with:
+      source_branch: ${{ github.ref_name }}
+      dest_branch: davidbrownell_release # BugBug release

@@ -19,7 +19,7 @@ run-name: ${{ github.run_number }} [${{ github.actor }}] on ${{ github.ref_name 
 on:
   push:
     branches:
-      - main
+      # BugBug - main
       - davidbrownell_main # BugBug
   workflow_dispatch:
 
@@ -43,3 +43,6 @@ jobs:
       - Common_PythonDevelopmentBugBug
 
     uses: davidbrownell/v4-Common_Foundation/.github/workflows/callable_promote_to_release.yaml@CI-vBugBug
+    with:
+      source_branch: ${{ github.ref_name }}
+      dest_branch: davidbrownell_release # BugBug release
