@@ -9,7 +9,7 @@
 #
 #     Code Generator:         Jinja2
 #     Input Filename:         workflows/on_push_to_main.jinja2.yaml
-#     Generated Date:         2022-11-08 13:56:19.227161
+#     Generated Date:         2022-11-08 14:19:11.828009
 #
 # ----------------------------------------------------------------------
 # ----------------------------------------------------------------------
@@ -44,13 +44,13 @@ jobs:
   Common_PythonDevelopment:
     uses: ./.github/workflows/exercise_main.yaml
     with:
-      setup_branch_overrides: "v4-Common_PythonDevelopment:${{ github.base_ref }}"
+      setup_branch_overrides: "v4-Common_PythonDevelopment:${{ github.ref_name }}"
       subject_repo_name: "davidbrownell/v4-Common_PythonDevelopment"
 
   Common_PythonDevelopmentBugBug:
     uses: ./.github/workflows/exercise_main.yaml
     with:
-      branch_overrides: "v4-Common_PythonDevelopment:${{ github.base_ref }}"
+      branch_overrides: "v4-Common_PythonDevelopment:${{ github.ref_name }}"
       subject_repo_name: "davidbrownell/v4-Common_PythonDevelopment"
 
   # ----------------------------------------------------------------------
