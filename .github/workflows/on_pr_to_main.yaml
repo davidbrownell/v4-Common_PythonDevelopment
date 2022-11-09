@@ -8,7 +8,7 @@
 # this one.
 #
 #     Code Generator:         Jinja2
-#     Input Filename:         actions/pylint_verifier/action.jinja2.yml
+#     Input Filename:         workflows/on_pr_to_main.jinja2.yaml
 #     Generated Date:         2022-11-09
 #
 # ----------------------------------------------------------------------
@@ -17,10 +17,10 @@
 
 # ----------------------------------------------------------------------
 # |
-# |  action.yml
+# |  on_pr_to_main.yaml
 # |
 # |  David Brownell <db@DavidBrownell.com>
-# |      2022-10-31 14:47:15
+# |      2022-10-31 14:48:55
 # |
 # ----------------------------------------------------------------------
 # |
@@ -30,22 +30,16 @@
 # |  http://www.boost.org/LICENSE_1_0.txt.
 # |
 # ----------------------------------------------------------------------
-name: PylintVerifier
-description: Runs `PylintVerifier` on the repository.
+name: "OnPullRequest (main)"
+run-name: ${{ github.run_number }} [${{ github.event.pull_request.user.login }}] on ${{ github.ref_name }}
 
-inputs:
-  os:                                       {type: string, required: true}
-  configuration:                            {type: string, required: true}
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
 
-  script_extension:                         {type: string, required: true}
-  shell_name:                               {type: string, required: true}
-  working_dir:                              {type: string, required: true}
-
-  activate_statement:                       {type: string, required: true}
-
-runs:
-  using: composite
-  steps:
-    - name: "PylintVerifier"
-      run: ${{ inputs.activate_statement }} && PylintVerifier${{ inputs.script_extension }} Verify . --debug
-      shell: ${{ inputs.shell_name }}
+jobs:
+  _1fbc5ab1-736c-468f-b711-b825c52d87c8:
+    name: "branch: ${{ github.base_ref }}"
+    uses: ./.github/workflows/exercise_main.yaml

@@ -8,7 +8,7 @@
 # this one.
 #
 #     Code Generator:         Jinja2
-#     Input Filename:         actions/pylint_verifier/action.jinja2.yml
+#     Input Filename:         workflows/on_pr_to_release.jinja2.yaml
 #     Generated Date:         2022-11-09
 #
 # ----------------------------------------------------------------------
@@ -17,10 +17,10 @@
 
 # ----------------------------------------------------------------------
 # |
-# |  action.yml
+# |  on_pr_to_release.yaml
 # |
 # |  David Brownell <db@DavidBrownell.com>
-# |      2022-10-31 14:47:15
+# |      2022-11-08 13:55:11
 # |
 # ----------------------------------------------------------------------
 # |
@@ -30,22 +30,25 @@
 # |  http://www.boost.org/LICENSE_1_0.txt.
 # |
 # ----------------------------------------------------------------------
-name: PylintVerifier
-description: Runs `PylintVerifier` on the repository.
+name: "OnPullRequest (release)"
+run-name: ${{ github.run_number }} [${{ github.event.pull_request.user.login }}] on ${{ github.ref_name }}
 
-inputs:
-  os:                                       {type: string, required: true}
-  configuration:                            {type: string, required: true}
+on:
+  pull_request:
+    branches:
+      # I'm working pretty hard to get this workflow to respond to events. In practice, it seems that
+      # the first variation is the only one required when the branch name is something like 'davidbrownell_release',
+      # but I haven't been able to get this workflow to fire on this branch in practice.
+      - release
+      - 'release/'
+      - 'release/**'
+      - 'refs/heads/release'
+      - 'refs/heads/release/'
+      - 'refs/heads/release/**'
 
-  script_extension:                         {type: string, required: true}
-  shell_name:                               {type: string, required: true}
-  working_dir:                              {type: string, required: true}
+    workflow_dispatch:
 
-  activate_statement:                       {type: string, required: true}
-
-runs:
-  using: composite
-  steps:
-    - name: "PylintVerifier"
-      run: ${{ inputs.activate_statement }} && PylintVerifier${{ inputs.script_extension }} Verify . --debug
-      shell: ${{ inputs.shell_name }}
+jobs:
+  _0791f2d0-b1d3-41f0-88b5-90b91d72a522:
+    name: "branch: ${{ github.base_ref }}"
+    uses: davidbrownell/v4-Common_Foundation/.github/workflows/callable_pr_to_release.yaml@CI-v1.1.0

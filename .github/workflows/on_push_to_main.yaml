@@ -8,7 +8,7 @@
 # this one.
 #
 #     Code Generator:         Jinja2
-#     Input Filename:         actions/pylint_verifier/action.jinja2.yml
+#     Input Filename:         workflows/on_push_to_main.jinja2.yaml
 #     Generated Date:         2022-11-09
 #
 # ----------------------------------------------------------------------
@@ -17,10 +17,10 @@
 
 # ----------------------------------------------------------------------
 # |
-# |  action.yml
+# |  on_push_to_main.yaml
 # |
 # |  David Brownell <db@DavidBrownell.com>
-# |      2022-10-31 14:47:15
+# |      2022-11-07 14:40:15
 # |
 # ----------------------------------------------------------------------
 # |
@@ -30,22 +30,28 @@
 # |  http://www.boost.org/LICENSE_1_0.txt.
 # |
 # ----------------------------------------------------------------------
-name: PylintVerifier
-description: Runs `PylintVerifier` on the repository.
+name: OnPush (main)
+run-name: ${{ github.run_number }} [${{ github.actor }}] on ${{ github.ref_name }}
 
-inputs:
-  os:                                       {type: string, required: true}
-  configuration:                            {type: string, required: true}
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
-  script_extension:                         {type: string, required: true}
-  shell_name:                               {type: string, required: true}
-  working_dir:                              {type: string, required: true}
+jobs:
+  _a3fa3751-1863-4670-a89c-3e60a602ac0f:
+    uses: ./.github/workflows/exercise_main.yaml
+    with:
+      setup_branch_overrides: "v4-Common_PythonDevelopment:${{ github.ref_name }}"
+      subject_repo_name: "davidbrownell/v4-Common_PythonDevelopment"
 
-  activate_statement:                       {type: string, required: true}
+  # ----------------------------------------------------------------------
+  _d85d7987-f66b-4730-bfbc-faa03ee06958:
+    needs:
+      - _a3fa3751-1863-4670-a89c-3e60a602ac0f
 
-runs:
-  using: composite
-  steps:
-    - name: "PylintVerifier"
-      run: ${{ inputs.activate_statement }} && PylintVerifier${{ inputs.script_extension }} Verify . --debug
-      shell: ${{ inputs.shell_name }}
+    uses: davidbrownell/v4-Common_Foundation/.github/workflows/callable_promote_to_release.yaml@CI-v1.1.0
+    with:
+      source_branch: ${{ github.ref_name }}
+      dest_branch: release

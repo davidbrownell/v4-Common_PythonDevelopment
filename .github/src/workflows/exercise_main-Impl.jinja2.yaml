@@ -1,0 +1,35 @@
+# ----------------------------------------------------------------------
+# |
+# |  exercise_main-Impl.jinja2.yaml
+# |
+# |  David Brownell <db@DavidBrownell.com>
+# |      2022-11-07 14:35:08
+# |
+# ----------------------------------------------------------------------
+# |
+# |  Copyright David Brownell 2022
+# |  Distributed under the Boost Software License, Version 1.0. See
+# |  accompanying file LICENSE_1_0.txt or copy at
+# |  http://www.boost.org/LICENSE_1_0.txt.
+# |
+# ----------------------------------------------------------------------
+<<% extends "{}/.github/src/_BuildAndTest.template.yaml".format("DEVELOPMENT_ENVIRONMENT_FOUNDATION" | env) %>>
+
+<<% block inputs %>>
+      run_PylintVerifier:                   {type: boolean, default: true, required: true}
+<<% endblock %>>
+
+<<% block prologue_steps %>>
+      - name: PylintVerifier
+        uses: davidbrownell/v4-Common_PythonDevelopment/.github/actions/pylint_verifier@CI-v1.1.0
+        if: ${{ inputs.run_PylintVerifier == true || inputs.run_PylintVerifier == 'true' }}
+        with:
+          os:                               ${{ inputs.os }}
+          configuration:                    ${{ inputs.configuration }}
+
+          script_extension:                 ${{ steps.initialize.outputs.script_extension }}
+          shell_name:                       ${{ steps.initialize.outputs.shell_name }}
+          working_dir:                      ${{ steps.initialize.outputs.working_dir }}
+
+          activate_statement:               ${{ steps.activate.outputs.activate_statement }}
+<<% endblock %>>
