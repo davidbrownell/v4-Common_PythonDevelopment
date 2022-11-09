@@ -26,6 +26,8 @@ coverage.xml
 .vscode/*
 
 # ----------------------------------------------------------------------
+.github/**/Compiler.ConditionalInvocationQueryMixin.data
+
 .pylintrc
 
 Libraries/Python/Common_PythonDevelopment/src/Common_PythonDevelopment.egg-info/*
