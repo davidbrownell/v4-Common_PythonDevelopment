@@ -29,6 +29,7 @@ jobs:
     with:
       setup_branch_overrides: "v4-Common_PythonDevelopment:${{ github.ref_name }}"
       subject_repo_name: "davidbrownell/v4-Common_PythonDevelopment"
+      subject_repo_branch: "${{ github.ref_name }}"
 
   # ----------------------------------------------------------------------
   _d85d7987-f66b-4730-bfbc-faa03ee06958:
