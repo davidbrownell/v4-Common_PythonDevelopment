@@ -8,7 +8,7 @@
 # this one.
 #
 #     Code Generator:         Jinja2
-#     Input Filename:         workflows/on_pr_to_release.jinja2.yaml
+#     Input Filename:         workflows/main.jinja2.yaml
 #     Generated Date:         2022-11-09
 #
 # ----------------------------------------------------------------------
@@ -17,10 +17,10 @@
 
 # ----------------------------------------------------------------------
 # |
-# |  on_pr_to_release.yaml
+# |  main.yaml
 # |
 # |  David Brownell <db@DavidBrownell.com>
-# |      2022-11-08 13:55:11
+# |      2022-11-07 14:40:15
 # |
 # ----------------------------------------------------------------------
 # |
@@ -30,16 +30,31 @@
 # |  http://www.boost.org/LICENSE_1_0.txt.
 # |
 # ----------------------------------------------------------------------
-name: "OnPullRequest (release)"
-run-name: ${{ github.run_number }} [${{ github.event.pull_request.user.login }}] on ${{ github.ref_name }}
+name: main
+run-name: ${{ github.run_number }} [${{ github.actor }}] on ${{ github.ref_name }}
 
 on:
-  pull_request:
+  push:
     branches:
-      - release
+      - main
   workflow_dispatch:
 
 jobs:
-  _0791f2d0-b1d3-41f0-88b5-90b91d72a522:
-    name: "branch: ${{ github.base_ref }}"
-    uses: davidbrownell/v4-Common_Foundation/.github/workflows/callable_pr_to_release.yaml@CI-v1.1.0
+  _a3fa3751-1863-4670-a89c-3e60a602ac0f:
+    name: "[Common_PythonDevelopment]"
+    uses: ./.github/workflows/exercise_main.yaml
+    with:
+      setup_branch_overrides: "v4-Common_PythonDevelopment:${{ github.ref_name }}"
+      subject_repo_name: "davidbrownell/v4-Common_PythonDevelopment"
+
+  # ----------------------------------------------------------------------
+  _d85d7987-f66b-4730-bfbc-faa03ee06958:
+    name: Promote
+
+    needs:
+      - _a3fa3751-1863-4670-a89c-3e60a602ac0f
+
+    uses: davidbrownell/v4-Common_Foundation/.github/workflows/callable_create_stable_tag.yaml@CI-v1.1.0
+    with:
+      branch: ${{ github.ref_name }}
+      commit: ${{ github.sha }}
