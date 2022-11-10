@@ -1,23 +1,6 @@
 # ----------------------------------------------------------------------
-# ----------------------------------------------------------------------
-# ----------------------------------------------------------------------
-#
-# This file is the result of a code generation process; any changes made
-# to this file will be overwritten during the next code generation
-# invocation. Any changes MUST be made in the source file rather than in
-# this one.
-#
-#     Code Generator:         Jinja2
-#     Input Filename:         workflows/on_push_to_main.jinja2.yaml
-#     Generated Date:         2022-11-09
-#
-# ----------------------------------------------------------------------
-# ----------------------------------------------------------------------
-# ----------------------------------------------------------------------
-
-# ----------------------------------------------------------------------
 # |
-# |  on_push_to_main.yaml
+# |  main.yaml
 # |
 # |  David Brownell <db@DavidBrownell.com>
 # |      2022-11-07 14:40:15
@@ -30,7 +13,7 @@
 # |  http://www.boost.org/LICENSE_1_0.txt.
 # |
 # ----------------------------------------------------------------------
-name: OnPush (main)
+name: main
 run-name: ${{ github.run_number }} [${{ github.actor }}] on ${{ github.ref_name }}
 
 on:
@@ -54,7 +37,7 @@ jobs:
     needs:
       - _a3fa3751-1863-4670-a89c-3e60a602ac0f
 
-    uses: davidbrownell/v4-Common_Foundation/.github/workflows/callable_promote_to_release.yaml@CI-v1.1.0
+    uses: davidbrownell/v4-Common_Foundation/.github/workflows/callable_create_stable_tag.yaml@CI-v1.1.0
     with:
-      source_branch: ${{ github.ref_name }}
-      dest_branch: release
+      branch: ${{ github.ref_name }}
+      commit: ${{ github.sha }}
