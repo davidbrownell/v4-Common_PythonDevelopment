@@ -20,12 +20,11 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
   _a3fa3751-1863-4670-a89c-3e60a602ac0f:
-    name: "[Common_PythonDevelopment]"
-    uses: ./.github/workflows/exercise_main.yaml
+    name: "Common_PythonDevelopment"
+    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/exercise_main.yaml@CI-latest
     with:
       bootstrap_branch_overrides: "v4-Common_PythonDevelopment:${{ github.ref_name }}"
       repo_name: "davidbrownell/v4-Common_PythonDevelopment"
