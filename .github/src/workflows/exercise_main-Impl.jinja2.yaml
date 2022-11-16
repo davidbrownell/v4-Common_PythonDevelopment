@@ -21,7 +21,7 @@
 
 <<% block prologue_steps %>>
       - name: PylintVerifier
-        uses: davidbrownell/v4-Common_PythonDevelopment/.github/actions/pylint_verifier@CI-v1.1.0
+        uses: davidbrownell/v4-Common_PythonDevelopment/.github/actions/pylint_verifier@CI-v1.2.0
         if: ${{ inputs.run_PylintVerifier == true || inputs.run_PylintVerifier == 'true' }}
         with:
           os:                               ${{ inputs.os }}
