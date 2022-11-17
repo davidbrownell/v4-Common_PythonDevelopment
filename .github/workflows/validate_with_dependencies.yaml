@@ -8,7 +8,7 @@
 # this one.
 #
 #     Code Generator:         Jinja2
-#     Input Filename:         workflows/callable_validate_with_dependencies.jinja2.yaml
+#     Input Filename:         workflows/validate_with_dependencies.jinja2.yaml
 #     Generated Date:         2022-11-17
 #
 # ----------------------------------------------------------------------
@@ -17,7 +17,7 @@
 
 # ----------------------------------------------------------------------
 # |
-# |  callable_validate_with_dependencies.yaml
+# |  validate_with_dependencies.yaml
 # |
 # |  David Brownell <db@DavidBrownell.com>
 # |      2022-11-17 09:51:12
@@ -40,7 +40,7 @@ on:
 jobs:
   _e6c2d497-59dc-47c6-9ecf-766bc6c05de9:
     name: "Common_PythonDevelopment"
-    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/callable_validate.yaml@CI-latest
+    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/validate.yaml@CI-latest
     with:
       bootstrap_branch_overrides: "Common_PythonDevelopment:${{ inputs.repo_branch }}"
       repo_branch: ${{ inputs.repo_branch }}

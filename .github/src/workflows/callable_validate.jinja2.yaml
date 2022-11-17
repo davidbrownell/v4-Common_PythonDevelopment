@@ -3,7 +3,7 @@
 # |  callable_validate.yaml
 # |
 # |  David Brownell <db@DavidBrownell.com>
-# |      2022-11-17 09:49:46
+# |      2022-11-17 09:53:41
 # |
 # ----------------------------------------------------------------------
 # |
@@ -13,53 +13,25 @@
 # |  http://www.boost.org/LICENSE_1_0.txt.
 # |
 # ----------------------------------------------------------------------
-name: "[callable] Validates Common_PythonDevelopment"
+<<% extends "{}/.github/src/_BuildAndTest.template.yaml".format("DEVELOPMENT_ENVIRONMENT_FOUNDATION" | env) %>>
 
-on:
-  workflow_call:
-    inputs:
-      bootstrap_branch_overrides:           {type: string, required: false}
-      repo_branch:                          {type: string, required: false}
+<<% block name %>>"[impl] Common_PythonDevelopment-based Repository Validation"<<% endblock %>>
 
-jobs:
-  _1ed4153b-2753-4de5-a68f-0762a1a21914:
-    name: "Build and Test"
+<<% block inputs %>>
+      run_PylintVerifier:                   {type: boolean, required: true}
+<<% endblock %>>
 
-    strategy:
-      matrix:
-        os:
-          - macos-latest
-          - ubuntu-latest
-          - windows-latest
+<<% block prologue_steps %>>
+      - name: PylintVerifier
+        uses: davidbrownell/v4-Common_PythonDevelopment/.github/actions/pylint_verifier@CI-v1
+        if: ${{ inputs.run_PylintVerifier == true || inputs.run_PylintVerifier == 'true' }}
+        with:
+          os:                               ${{ inputs.os }}
+          configuration:                    ${{ inputs.configuration }}
 
-        configuration:
-          - python310
+          script_extension:                 ${{ steps.initialize.outputs.script_extension }}
+          shell_name:                       ${{ steps.initialize.outputs.shell_name }}
+          working_dir:                      ${{ steps.initialize.outputs.working_dir }}
 
-    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/impl_validate.yaml@CI-latest
-    with:
-      friendly_repo_name:                   Common_PythonDevelopment
-      repo_name:                            davidbrownell/v4-Common_PythonDevelopment
-      repo_branch:                          ${{ inputs.repo_branch }}
-      bootstrap_branch_overrides:           ${{ inputs.bootstrap_branch_overrides }}
-
-      os:                                   ${{ matrix.os }}
-      configuration:                        ${{ matrix.configuration }}
-
-      run_PylintVerifier:                   true
-      run_Builder:                          true
-
-      # Use the following values to control how different test types are run:
-      #
-      #   0: Do not run these test types
-      #   1: Run these test types without code coverage
-      #   2: Run these test types with code coverage
-      #   3: Run these test types with and without code coverage
-
-      execute_UnitTests:                    3
-      execute_FunctionalTests:              1
-      execute_IntegrationTests:             1
-      execute_SystemTests:                  1
-      execute_LocalEndToEndTests:           1
-      execute_EndToEndTests:                0
-      execute_BuildVerificationTests:       0
-      execute_PerformanceTests:             0
+          activate_statement:               ${{ steps.activate.outputs.activate_statement }}
+<<% endblock %>>

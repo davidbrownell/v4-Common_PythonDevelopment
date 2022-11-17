@@ -23,4 +23,4 @@ on:
 jobs:
   _66a767fe-2d86-4e5e-aad4-3cc977d41aa1:
     name: "Validate"
-    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/callable_validate.yaml@CI-latest
+    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/validate.yaml@CI-latest
