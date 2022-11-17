@@ -22,6 +22,6 @@ on:
 jobs:
   _5edf5467-1738-494a-a5a5-dab584b26b41:
     name: "Validate"
-    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/callable_validate_with_dependencies.yaml@CI-latest
+    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/validate_with_dependencies.yaml@CI-latest
     with:
       repo_branch:                          ${{ github.ref_name }}

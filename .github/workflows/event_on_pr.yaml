@@ -41,4 +41,4 @@ on:
 jobs:
   _dd962a2f-8e5d-439f-8607-4b34864f6038:
     name: "Validate (target: ${{ github.base_ref }})"
-    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/callable_validate.yaml@CI-latest
+    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/validate.yaml@CI-latest
