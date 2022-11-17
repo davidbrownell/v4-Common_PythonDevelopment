@@ -8,8 +8,8 @@
 # this one.
 #
 #     Code Generator:         Jinja2
-#     Input Filename:         workflows/periodic.jinja2.yaml
-#     Generated Date:         2022-11-16
+#     Input Filename:         workflows/event_on_pr.jinja2.yaml
+#     Generated Date:         2022-11-17
 #
 # ----------------------------------------------------------------------
 # ----------------------------------------------------------------------
@@ -17,10 +17,10 @@
 
 # ----------------------------------------------------------------------
 # |
-# |  periodic.yaml
+# |  event_on_pr.yaml
 # |
 # |  David Brownell <db@DavidBrownell.com>
-# |      2022-11-16 07:44:06
+# |      2022-11-17 09:47:01
 # |
 # ----------------------------------------------------------------------
 # |
@@ -30,17 +30,15 @@
 # |  http://www.boost.org/LICENSE_1_0.txt.
 # |
 # ----------------------------------------------------------------------
-name: Periodic
+name: "on pull request"
 run-name: ${{ github.run_number }} [${{ github.actor }}] on ${{ github.ref_name }}
 
 on:
-  workflow_dispatch:
-  schedule:
-    - cron: '0 9 * * *' # Once a day at 9am UTC
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  _3708d875-b4c1-4265-89d0-93553e16c0c3:
-    name: "Build and Test"
-    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/exercise_main.yaml@CI-latest
-    with:
-      repo_branch: main_stable
+  _dd962a2f-8e5d-439f-8607-4b34864f6038:
+    name: "Build and Test (${{ github.base_ref }})"
+    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/exercise.yaml@CI-latest

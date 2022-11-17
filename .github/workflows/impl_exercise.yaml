@@ -8,8 +8,8 @@
 # this one.
 #
 #     Code Generator:         Jinja2
-#     Input Filename:         workflows/exercise_main-Impl.jinja2.yaml
-#     Generated Date:         2022-11-16
+#     Input Filename:         workflows/impl_exercise.jinja2.yaml
+#     Generated Date:         2022-11-17
 #
 # ----------------------------------------------------------------------
 # ----------------------------------------------------------------------
@@ -17,10 +17,10 @@
 
 # ----------------------------------------------------------------------
 # |
-# |  exercise_main-Impl.jinja2.yaml
+# |  impl_exercise.yaml
 # |
 # |  David Brownell <db@DavidBrownell.com>
-# |      2022-11-07 14:35:08
+# |      2022-11-17 09:53:41
 # |
 # ----------------------------------------------------------------------
 # |
@@ -80,7 +80,7 @@ on:
       execute_BuildVerificationTests:       {type: number, required: true, default: 0}
       execute_PerformanceTests:             {type: number, required: true, default: 0}
 
-      run_PylintVerifier:                   {type: boolean, default: true, required: true}
+      run_PylintVerifier:                   {type: boolean, required: true}
 
 jobs:
   _8fb649ac-dac3-4de2-8bb5-a3eb6b7c5b70:

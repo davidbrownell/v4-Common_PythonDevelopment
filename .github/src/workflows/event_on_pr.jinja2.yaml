@@ -1,0 +1,27 @@
+# ----------------------------------------------------------------------
+# |
+# |  event_on_pr.yaml
+# |
+# |  David Brownell <db@DavidBrownell.com>
+# |      2022-11-17 09:47:01
+# |
+# ----------------------------------------------------------------------
+# |
+# |  Copyright David Brownell 2022
+# |  Distributed under the Boost Software License, Version 1.0. See
+# |  accompanying file LICENSE_1_0.txt or copy at
+# |  http://www.boost.org/LICENSE_1_0.txt.
+# |
+# ----------------------------------------------------------------------
+name: "on pull request"
+run-name: ${{ github.run_number }} [${{ github.actor }}] on ${{ github.ref_name }}
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  _dd962a2f-8e5d-439f-8607-4b34864f6038:
+    name: "Build and Test (${{ github.base_ref }})"
+    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/exercise.yaml@CI-latest

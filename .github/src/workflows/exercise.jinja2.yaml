@@ -1,9 +1,9 @@
 # ----------------------------------------------------------------------
 # |
-# |  exercise_main.yaml
+# |  exercise.yaml
 # |
 # |  David Brownell <db@DavidBrownell.com>
-# |      2022-11-07 14:35:48
+# |      2022-11-17 09:49:46
 # |
 # ----------------------------------------------------------------------
 # |
@@ -16,23 +16,12 @@
 on:
   workflow_call:
     inputs:
-      bootstrap_branch_overrides:
-        type: string
-        required: false
-        description: "See https://github.com/davidbrownell/v4-Common_Foundation/.github/src/_BuildAndTest.template.yaml"
-
-      repo_name:
-        type: string
-        required: false
-        description: "See https://github.com/davidbrownell/v4-Common_Foundation/.github/src/_BuildAndTest.template.yaml"
-
-      repo_branch:
-        type: string
-        required: false
-        description: "See https://github.com/davidbrownell/v4-Common_Foundation/.github/src/_BuildAndTest.template.yaml"
+      bootstrap_branch_overrides:           {type: string, required: false}
+      repo_name:                            {type: string, required: false}
+      repo_branch:                          {type: string, required: false}
 
 jobs:
-  _2fd39e81-41e2-443b-9141-48e61bb53de2:
+  _1ed4153b-2753-4de5-a68f-0762a1a21914:
     name: "[Common_PythonDevelopment] Build and Test"
 
     strategy:
@@ -45,7 +34,7 @@ jobs:
         configuration:
           - python310
 
-    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/exercise_main-Impl.yaml@CI-latest
+    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/impl_exercise.yaml@CI-latest
     with:
       bootstrap_branch_overrides:           ${{ inputs.bootstrap_branch_overrides }}
       repo_name:                            ${{ inputs.repo_name }}
