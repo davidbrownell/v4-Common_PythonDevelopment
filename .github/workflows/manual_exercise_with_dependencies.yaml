@@ -8,7 +8,7 @@
 # this one.
 #
 #     Code Generator:         Jinja2
-#     Input Filename:         actions/pylint_verifier/action.jinja2.yml
+#     Input Filename:         workflows/manual_exercise_with_dependencies.jinja2.yaml
 #     Generated Date:         2022-11-17
 #
 # ----------------------------------------------------------------------
@@ -17,10 +17,10 @@
 
 # ----------------------------------------------------------------------
 # |
-# |  action.yml
+# |  manual_exercise_with_dependencies.yaml
 # |
 # |  David Brownell <db@DavidBrownell.com>
-# |      2022-10-31 14:47:15
+# |      2022-11-17 09:54:47
 # |
 # ----------------------------------------------------------------------
 # |
@@ -30,22 +30,15 @@
 # |  http://www.boost.org/LICENSE_1_0.txt.
 # |
 # ----------------------------------------------------------------------
-name: PylintVerifier
-description: Runs `PylintVerifier` on the repository.
+name: "Validate This Repository (and its dependencies)"
+run-name: ${{ github.run_number }} [${{ github.actor }}] on ${{ github.ref_name }}
 
-inputs:
-  os:                                       {type: string, required: true}
-  configuration:                            {type: string, required: true}
+on:
+  workflow_dispatch:
 
-  script_extension:                         {type: string, required: true}
-  shell_name:                               {type: string, required: true}
-  working_dir:                              {type: string, required: true}
-
-  activate_statement:                       {type: string, required: true}
-
-runs:
-  using: composite
-  steps:
-    - name: "PylintVerifier"
-      run: ${{ inputs.activate_statement }} && PylintVerifier${{ inputs.script_extension }} Verify . --debug
-      shell: ${{ inputs.shell_name }}
+jobs:
+  _5edf5467-1738-494a-a5a5-dab584b26b41:
+    name: "Build and Test All (${{ github.ref_name }})"
+    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/impl_exercise_with_dependencies.yaml@CI-latest
+    with:
+      repo_branch:                          ${{ github.ref_name }}

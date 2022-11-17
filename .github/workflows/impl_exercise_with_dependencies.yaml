@@ -8,8 +8,8 @@
 # this one.
 #
 #     Code Generator:         Jinja2
-#     Input Filename:         workflows/main.jinja2.yaml
-#     Generated Date:         2022-11-16
+#     Input Filename:         workflows/impl_exercise_with_dependencies.jinja2.yaml
+#     Generated Date:         2022-11-17
 #
 # ----------------------------------------------------------------------
 # ----------------------------------------------------------------------
@@ -17,10 +17,10 @@
 
 # ----------------------------------------------------------------------
 # |
-# |  main.yaml
+# |  impl_exercise_with_dependencies.yaml
 # |
 # |  David Brownell <db@DavidBrownell.com>
-# |      2022-11-07 14:40:15
+# |      2022-11-17 09:51:12
 # |
 # ----------------------------------------------------------------------
 # |
@@ -30,31 +30,16 @@
 # |  http://www.boost.org/LICENSE_1_0.txt.
 # |
 # ----------------------------------------------------------------------
-name: main
-run-name: ${{ github.run_number }} [${{ github.actor }}] on ${{ github.ref_name }}
-
 on:
-  push:
-    branches:
-      - main
+  workflow_call:
+    inputs:
+      repo_branch:                          {type: string, required: true}
 
 jobs:
-  _a3fa3751-1863-4670-a89c-3e60a602ac0f:
+  _e6c2d497-59dc-47c6-9ecf-766bc6c05de9:
     name: "Common_PythonDevelopment"
-    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/exercise_main.yaml@CI-latest
+    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/exercise.yaml@CI-latest
     with:
-      bootstrap_branch_overrides: "v4-Common_PythonDevelopment:${{ github.ref_name }}"
+      bootstrap_branch_overrides: "Common_PythonDevelopment:${{ inputs.repo_branch }}"
       repo_name: "davidbrownell/v4-Common_PythonDevelopment"
-      repo_branch: "${{ github.ref_name }}"
-
-  # ----------------------------------------------------------------------
-  _d85d7987-f66b-4730-bfbc-faa03ee06958:
-    name: Promote
-
-    needs:
-      - _a3fa3751-1863-4670-a89c-3e60a602ac0f
-
-    uses: davidbrownell/v4-Common_Foundation/.github/workflows/callable_create_stable_tag.yaml@CI-v1
-    with:
-      branch: ${{ github.ref_name }}
-      commit: ${{ github.sha }}
+      repo_branch: ${{ inputs.repo_branch }}

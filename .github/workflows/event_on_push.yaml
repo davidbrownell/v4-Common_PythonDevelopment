@@ -8,8 +8,8 @@
 # this one.
 #
 #     Code Generator:         Jinja2
-#     Input Filename:         workflows/build_and_test..jinja2.yaml
-#     Generated Date:         2022-11-16
+#     Input Filename:         workflows/event_on_push.jinja2.yaml
+#     Generated Date:         2022-11-17
 #
 # ----------------------------------------------------------------------
 # ----------------------------------------------------------------------
@@ -17,10 +17,10 @@
 
 # ----------------------------------------------------------------------
 # |
-# |  build_and_test.yaml
+# |  event_on_push.yaml
 # |
 # |  David Brownell <db@DavidBrownell.com>
-# |      2022-11-09 14:35:38
+# |      2022-11-17 09:47:50
 # |
 # ----------------------------------------------------------------------
 # |
@@ -30,13 +30,40 @@
 # |  http://www.boost.org/LICENSE_1_0.txt.
 # |
 # ----------------------------------------------------------------------
-name: "Build and Test"
+name: "on push"
 run-name: ${{ github.run_number }} [${{ github.actor }}] on ${{ github.ref_name }}
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
-  _3708d875-b4c1-4265-89d0-93553e16c0c3:
-    name: "Build and Test"
-    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/exercise_main.yaml@CI-latest
+  _837fb405-19bf-406f-867a-de0b1975e1ba:
+    name: "Build and Test Dependencies"
+    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/impl_exercise_with_dependencies.yaml@CI-latest
+    with:
+      repo_branch:                          ${{ github.ref_name }}
+
+  _d9f0fe2d-2203-4ae4-8cfd-35168e50c372:
+    name: "Promote"
+    runs-on: ubuntu-latest
+
+    needs:
+      - _837fb405-19bf-406f-867a-de0b1975e1ba
+
+    steps:
+      - name: "[Impl] Dump Contexts"
+        uses: davidbrownell/v4-Common_Foundation/.github/actions/dump_contexts@CI-v1
+
+      - name: Checkout source
+        uses: actions/checkout@v3
+        with:
+          ref: refs/heads/${{ github.ref_name }}
+
+      - name: Create Tag
+        uses: davidbrownell/v4-Common_Foundation/.github/actions/create_tag@CI-v1
+        with:
+          tag_name:                         "${{ github.ref_name }}_stable"
+          tag_message:                      "🤖 Stability Verified on ${{ github.ref_name }}"
+          commit:                           "${{ github.sha }}"

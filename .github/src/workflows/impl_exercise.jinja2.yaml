@@ -1,9 +1,9 @@
 # ----------------------------------------------------------------------
 # |
-# |  exercise_main-Impl.jinja2.yaml
+# |  impl_exercise.yaml
 # |
 # |  David Brownell <db@DavidBrownell.com>
-# |      2022-11-07 14:35:08
+# |      2022-11-17 09:53:41
 # |
 # ----------------------------------------------------------------------
 # |
@@ -16,7 +16,7 @@
 <<% extends "{}/.github/src/_BuildAndTest.template.yaml".format("DEVELOPMENT_ENVIRONMENT_FOUNDATION" | env) %>>
 
 <<% block inputs %>>
-      run_PylintVerifier:                   {type: boolean, default: true, required: true}
+      run_PylintVerifier:                   {type: boolean, required: true}
 <<% endblock %>>
 
 <<% block prologue_steps %>>
