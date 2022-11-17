@@ -1,6 +1,6 @@
 # ----------------------------------------------------------------------
 # |
-# |  impl_exercise.yaml
+# |  impl_validate.yaml
 # |
 # |  David Brownell <db@DavidBrownell.com>
 # |      2022-11-17 09:53:41
@@ -14,6 +14,8 @@
 # |
 # ----------------------------------------------------------------------
 <<% extends "{}/.github/src/_BuildAndTest.template.yaml".format("DEVELOPMENT_ENVIRONMENT_FOUNDATION" | env) %>>
+
+<<% block name %>>"[impl] Common_PythonDevelopment-based Repository Validation"<<% endblock %>>
 
 <<% block inputs %>>
       run_PylintVerifier:                   {type: boolean, required: true}

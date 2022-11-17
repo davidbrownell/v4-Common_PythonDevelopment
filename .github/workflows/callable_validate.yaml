@@ -8,7 +8,7 @@
 # this one.
 #
 #     Code Generator:         Jinja2
-#     Input Filename:         workflows/exercise.jinja2.yaml
+#     Input Filename:         workflows/callable_validate.jinja2.yaml
 #     Generated Date:         2022-11-17
 #
 # ----------------------------------------------------------------------
@@ -17,7 +17,7 @@
 
 # ----------------------------------------------------------------------
 # |
-# |  exercise.yaml
+# |  callable_validate.yaml
 # |
 # |  David Brownell <db@DavidBrownell.com>
 # |      2022-11-17 09:49:46
@@ -30,6 +30,8 @@
 # |  http://www.boost.org/LICENSE_1_0.txt.
 # |
 # ----------------------------------------------------------------------
+name: "[callable] Validates Common_PythonDevelopment"
+
 on:
   workflow_call:
     inputs:
@@ -51,7 +53,7 @@ jobs:
         configuration:
           - python310
 
-    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/impl_exercise.yaml@CI-latest
+    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/impl_validate.yaml@CI-latest
     with:
       bootstrap_branch_overrides:           ${{ inputs.bootstrap_branch_overrides }}
       repo_name:                            ${{ inputs.repo_name }}

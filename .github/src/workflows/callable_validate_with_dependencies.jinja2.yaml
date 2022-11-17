@@ -1,6 +1,6 @@
 # ----------------------------------------------------------------------
 # |
-# |  impl_exercise_with_dependencies.yaml
+# |  callable_validate_with_dependencies.yaml
 # |
 # |  David Brownell <db@DavidBrownell.com>
 # |      2022-11-17 09:51:12
@@ -13,6 +13,8 @@
 # |  http://www.boost.org/LICENSE_1_0.txt.
 # |
 # ----------------------------------------------------------------------
+name: "[callable] Validates Common_PythonDevelopment (and its dependencies)"
+
 on:
   workflow_call:
     inputs:
@@ -21,7 +23,7 @@ on:
 jobs:
   _e6c2d497-59dc-47c6-9ecf-766bc6c05de9:
     name: "Common_PythonDevelopment"
-    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/exercise.yaml@CI-latest
+    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/callable_validate.yaml@CI-latest
     with:
       bootstrap_branch_overrides: "Common_PythonDevelopment:${{ inputs.repo_branch }}"
       repo_name: "davidbrownell/v4-Common_PythonDevelopment"
