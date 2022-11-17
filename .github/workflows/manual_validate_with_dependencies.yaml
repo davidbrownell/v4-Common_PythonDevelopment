@@ -8,7 +8,7 @@
 # this one.
 #
 #     Code Generator:         Jinja2
-#     Input Filename:         workflows/manual_exercise_with_dependencies.jinja2.yaml
+#     Input Filename:         workflows/manual_validate_with_dependencies.jinja2.yaml
 #     Generated Date:         2022-11-17
 #
 # ----------------------------------------------------------------------
@@ -17,7 +17,7 @@
 
 # ----------------------------------------------------------------------
 # |
-# |  manual_exercise_with_dependencies.yaml
+# |  manual_validate_with_dependencies.yaml
 # |
 # |  David Brownell <db@DavidBrownell.com>
 # |      2022-11-17 09:54:47
@@ -30,7 +30,7 @@
 # |  http://www.boost.org/LICENSE_1_0.txt.
 # |
 # ----------------------------------------------------------------------
-name: "Validate This Repository (and its dependencies)"
+name: "Validate (including dependencies)"
 run-name: ${{ github.run_number }} [${{ github.actor }}] on ${{ github.ref_name }}
 
 on:
@@ -39,6 +39,6 @@ on:
 jobs:
   _5edf5467-1738-494a-a5a5-dab584b26b41:
     name: "Build and Test All (${{ github.ref_name }})"
-    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/impl_exercise_with_dependencies.yaml@CI-latest
+    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/callable_validate_with_dependencies.yaml@CI-latest
     with:
       repo_branch:                          ${{ github.ref_name }}

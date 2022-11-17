@@ -8,7 +8,7 @@
 # this one.
 #
 #     Code Generator:         Jinja2
-#     Input Filename:         workflows/manual_exercise.jinja2.yaml
+#     Input Filename:         workflows/callable_validate_with_dependencies.jinja2.yaml
 #     Generated Date:         2022-11-17
 #
 # ----------------------------------------------------------------------
@@ -17,10 +17,10 @@
 
 # ----------------------------------------------------------------------
 # |
-# |  manual_exercise.yaml
+# |  callable_validate_with_dependencies.yaml
 # |
 # |  David Brownell <db@DavidBrownell.com>
-# |      2022-11-17 09:55:32
+# |      2022-11-17 09:51:12
 # |
 # ----------------------------------------------------------------------
 # |
@@ -30,13 +30,18 @@
 # |  http://www.boost.org/LICENSE_1_0.txt.
 # |
 # ----------------------------------------------------------------------
-name: "Validate This Repository"
-run-name: ${{ github.run_number }} [${{ github.actor }}] on ${{ github.ref_name }}
+name: "[callable] Validates Common_PythonDevelopment (and its dependencies)"
 
 on:
-  workflow_dispatch:
+  workflow_call:
+    inputs:
+      repo_branch:                          {type: string, required: true}
 
 jobs:
-  _bdbd97dc-3389-4433-b23b-23c2177a1366:
-    name: "Build and Test (${{ github.ref_name }})"
-    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/exercise.yaml@CI-latest
+  _e6c2d497-59dc-47c6-9ecf-766bc6c05de9:
+    name: "Common_PythonDevelopment"
+    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/callable_validate.yaml@CI-latest
+    with:
+      bootstrap_branch_overrides: "Common_PythonDevelopment:${{ inputs.repo_branch }}"
+      repo_name: "davidbrownell/v4-Common_PythonDevelopment"
+      repo_branch: ${{ inputs.repo_branch }}
