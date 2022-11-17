@@ -32,25 +32,31 @@
 # ----------------------------------------------------------------------
 
 name: "[impl] Common_PythonDevelopment-based Repository Validation"
+
 on:
   workflow_call:
     inputs:
       # ----------------------------------------------------------------------
       # |  Misc
+      repo_name:
+        type: string
+        required: true
+        description: "Official GitHub repo name in the form: <username>/<repo_name> (e.g. 'davidbrownell/v4-Common_Foundation')."
+
+      friendly_repo_name:
+        type: string
+        required: true
+        description: "Friendly name of the repository used in workflow displays (e.g. 'Common_Foundation')."
+
       bootstrap_branch_overrides:
         type: string
         required: false
         description: Forces Enlist.py to clone repositories according to specified branch.
 
-      repo_name:
-        type: string
-        required: false
-        description: Repository under test (the repository associated with the event that triggered the workflow will be used if this value is not provided).
-
       repo_branch:
         type: string
         required: false
-        description: Repository branch under test (the branch associated with the event that triggered the workflow will be used if this value is not provided).
+        description: Repository branch under test.
 
       os:
         type: string
@@ -85,7 +91,7 @@ on:
 
 jobs:
   _8fb649ac-dac3-4de2-8bb5-a3eb6b7c5b70:
-    name: "[${{ inputs.os }}, ${{ inputs.configuration }}]"
+    name: "${{ inputs.friendly_repo_name }} (${{ inputs.os }}, ${{ inputs.configuration }})"
     runs-on: ${{ inputs.os }}
 
     env:

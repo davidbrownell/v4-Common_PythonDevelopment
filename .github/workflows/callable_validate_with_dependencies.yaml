@@ -43,5 +43,4 @@ jobs:
     uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/callable_validate.yaml@CI-latest
     with:
       bootstrap_branch_overrides: "Common_PythonDevelopment:${{ inputs.repo_branch }}"
-      repo_name: "davidbrownell/v4-Common_PythonDevelopment"
       repo_branch: ${{ inputs.repo_branch }}

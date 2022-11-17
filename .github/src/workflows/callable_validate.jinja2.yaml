@@ -19,12 +19,11 @@ on:
   workflow_call:
     inputs:
       bootstrap_branch_overrides:           {type: string, required: false}
-      repo_name:                            {type: string, required: false}
       repo_branch:                          {type: string, required: false}
 
 jobs:
   _1ed4153b-2753-4de5-a68f-0762a1a21914:
-    name: "[Common_PythonDevelopment] Build and Test"
+    name: "Build and Test"
 
     strategy:
       matrix:
@@ -38,9 +37,10 @@ jobs:
 
     uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/impl_validate.yaml@CI-latest
     with:
-      bootstrap_branch_overrides:           ${{ inputs.bootstrap_branch_overrides }}
-      repo_name:                            ${{ inputs.repo_name }}
+      friendly_repo_name:                   Common_PythonDevelopment
+      repo_name:                            davidbrownell/v4-Common_PythonDevelopment
       repo_branch:                          ${{ inputs.repo_branch }}
+      bootstrap_branch_overrides:           ${{ inputs.bootstrap_branch_overrides }}
 
       os:                                   ${{ matrix.os }}
       configuration:                        ${{ matrix.configuration }}

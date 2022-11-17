@@ -21,5 +21,5 @@ on:
 
 jobs:
   _bdbd97dc-3389-4433-b23b-23c2177a1366:
-    name: "Build and Test (${{ github.ref_name }})"
+    name: "Validate"
     uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/callable_validate.yaml@CI-latest

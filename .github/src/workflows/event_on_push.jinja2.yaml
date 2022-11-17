@@ -23,14 +23,14 @@ on:
 
 jobs:
   _837fb405-19bf-406f-867a-de0b1975e1ba:
-    name: "Build and Test Dependencies"
+    name: "Validate"
     uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/callable_validate_with_dependencies.yaml@CI-latest
     with:
       repo_branch:                          ${{ github.ref_name }}
 
   _d9f0fe2d-2203-4ae4-8cfd-35168e50c372:
     name: "Promote"
-    uses: davidbrownell/v4-Common_Foundation/.github/workflows/callable_promote.yaml@CI-v1
+    uses: davidbrownell/v4-Common_Foundation/.github/workflows/callable_promote_impl.yaml@CI-v1
 
     needs:
       - _837fb405-19bf-406f-867a-de0b1975e1ba
