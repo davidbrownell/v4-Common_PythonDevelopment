@@ -25,5 +25,5 @@ jobs:
     name: "Common_PythonDevelopment"
     uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/validate.yaml@CI-latest
     with:
-      bootstrap_branch_overrides: "Common_PythonDevelopment:${{ inputs.repo_branch }}"
       repo_branch: ${{ inputs.repo_branch }}
+      bootstrap_branch_overrides: "Common_PythonDevelopment:${{ inputs.repo_branch }}"

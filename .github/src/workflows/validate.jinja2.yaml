@@ -18,8 +18,8 @@ name: "[callable] Validates Common_PythonDevelopment"
 on:
   workflow_call:
     inputs:
+      repo_branch:                          {type: string, required: true}
       bootstrap_branch_overrides:           {type: string, required: false}
-      repo_branch:                          {type: string, required: false}
 
 jobs:
   _1ed4153b-2753-4de5-a68f-0762a1a21914:
