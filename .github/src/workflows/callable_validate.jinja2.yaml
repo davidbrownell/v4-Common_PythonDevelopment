@@ -13,25 +13,6 @@
 # |  http://www.boost.org/LICENSE_1_0.txt.
 # |
 # ----------------------------------------------------------------------
-<<% extends "{}/.github/src/_BuildAndTest.template.yaml".format("DEVELOPMENT_ENVIRONMENT_FOUNDATION" | env) %>>
+<<% extends "../_BuildAndTest_python.template.yaml" %>>
 
 <<% block name %>>"[impl] Common_PythonDevelopment-based Repository Validation"<<% endblock %>>
-
-<<% block inputs %>>
-      run_PylintVerifier:                   {type: boolean, required: true}
-<<% endblock %>>
-
-<<% block prologue_steps %>>
-      - name: PylintVerifier
-        uses: davidbrownell/v4-Common_PythonDevelopment/.github/actions/pylint_verifier@CI-v1
-        if: ${{ inputs.run_PylintVerifier == true || inputs.run_PylintVerifier == 'true' }}
-        with:
-          os:                               ${{ inputs.os }}
-          configuration:                    ${{ inputs.configuration }}
-
-          script_extension:                 ${{ steps.initialize.outputs.script_extension }}
-          shell_name:                       ${{ steps.initialize.outputs.shell_name }}
-          working_dir:                      ${{ steps.initialize.outputs.working_dir }}
-
-          activate_statement:               ${{ steps.activate.outputs.activate_statement }}
-<<% endblock %>>

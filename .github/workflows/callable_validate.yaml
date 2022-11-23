@@ -31,6 +31,7 @@
 # |
 # ----------------------------------------------------------------------
 
+
 name: "[impl] Common_PythonDevelopment-based Repository Validation"
 
 on:
@@ -175,6 +176,7 @@ jobs:
           working_dir:                      ${{ steps.initialize.outputs.working_dir }}
 
           activate_statement:               ${{ steps.activate.outputs.activate_statement }}
+
 
       - name: Builder
         uses: davidbrownell/v4-Common_Foundation/.github/actions/builder@CI-v1
