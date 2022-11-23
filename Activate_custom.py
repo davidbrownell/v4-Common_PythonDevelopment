@@ -82,6 +82,13 @@ def GetCustomActions(                                                       # py
         ),
     )
 
+    commands.append(
+        Commands.Set(
+            "DEVELOPMENT_ENVIRONMENT_PYTHON_DEVELOPMENT_ROOT",
+            str(root_dir),
+        ),
+    )
+
     return commands
 
 
