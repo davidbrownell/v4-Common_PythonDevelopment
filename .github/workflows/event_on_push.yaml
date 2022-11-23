@@ -9,7 +9,7 @@
 #
 #     Code Generator:         Jinja2
 #     Input Filename:         workflows/event_on_push.jinja2.yaml
-#     Generated Date:         2022-11-18
+#     Generated Date:         2022-11-23
 #
 # ----------------------------------------------------------------------
 # ----------------------------------------------------------------------
@@ -37,6 +37,8 @@ on:
   push:
     branches:
       - main
+
+concurrency: "on_push-${{ github.ref_name }}"
 
 jobs:
   _837fb405-19bf-406f-867a-de0b1975e1ba:
