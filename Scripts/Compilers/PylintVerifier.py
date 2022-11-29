@@ -122,6 +122,9 @@ class Verifier(VerifierBase, IInvoker):
         self,
         item: Path,
     ) -> bool:
+        if item.suffix != ".py":
+            return False
+
         if item.name in ["__init__.py", "__main__.py", "Build.py"]:
             return False
 
@@ -149,11 +152,21 @@ class Verifier(VerifierBase, IInvoker):
         if self.IsSupportedTestItem(item):
             return item
 
-        return item.parent / "{}_{}{}".format(
-            item.stem,
-            inflect.singular_noun(test_type_name) or test_type_name,
-            item.suffix,
-        )
+        potential_filename: Optional[Path] = None
+
+        for sep in [".", "_"]:
+            potential_filename = item.parent / "{}{}{}{}".format(
+                item.stem,
+                sep,
+                inflect.singular_noun(test_type_name) or test_type_name,
+                item.suffix,
+            )
+
+            if potential_filename.is_file():
+                return potential_filename
+
+        assert potential_filename is not None
+        return potential_filename
 
     # ----------------------------------------------------------------------
     _TestItemToName_regex: Optional[Pattern]            = None
@@ -168,7 +181,7 @@ class Verifier(VerifierBase, IInvoker):
                 textwrap.dedent(
                     r"""(?#
                     Start of content        )^(?#
-                    Name                    )(?P<name>.+)_(?#
+                    Name                    )(?P<name>.+)[_\.](?#
                     Test Type               )(?P<test_type>[^_\.]+Test)(?#
                     Extension               )(?P<ext>\..+)(?#
                     End of content          )$(?#
