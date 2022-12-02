@@ -89,6 +89,7 @@ class Verifier(VerifierBase, IInvoker):
             "Statically analyzes Python source code using Pylint.",
             InputType.Files,
             can_execute_in_parallel=True,
+            potential_test_item_separators=[".", "_", ],
         )
 
         self.execute_converted_sut_files    = execute_converted_sut_files
@@ -143,30 +144,13 @@ class Verifier(VerifierBase, IInvoker):
         if item.stem.lower().endswith("impl"):
             return None
 
-        if item.name == "__init__.py" and item.stat().st_size == 0:
-            return None
-
         if item.name == "__main__.py":
             return None
 
-        if self.IsSupportedTestItem(item):
-            return item
+        if item.name == "__init__.py" and item.stat().st_size == 0:
+            return None
 
-        potential_filename: Optional[Path] = None
-
-        for sep in [".", "_"]:
-            potential_filename = item.parent / "{}{}{}{}".format(
-                item.stem,
-                sep,
-                inflect.singular_noun(test_type_name) or test_type_name,
-                item.suffix,
-            )
-
-            if potential_filename.is_file():
-                return potential_filename
-
-        assert potential_filename is not None
-        return potential_filename
+        return super(Verifier, self).ItemToTestName(item, test_type_name)
 
     # ----------------------------------------------------------------------
     _TestItemToName_regex: Optional[Pattern]            = None
