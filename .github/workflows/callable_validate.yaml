@@ -48,6 +48,12 @@ on:
         required: true
         description: Repository branch under test.
 
+      is_mixin_repository:
+        type: boolean
+        required: false
+        description: True if the repository is a mixin repository.
+        default: false
+
       job_name_prefix:
         type: string
         required: true
@@ -163,6 +169,9 @@ jobs:
           os:                               ${{ inputs.os }}
           configuration:                    ${{ inputs.configuration }}
           shell_name:                       ${{ steps.initialize.outputs.shell_name }}
+
+          working_dir:                      ${{ steps.initialize.outputs.working_dir }}
+          is_mixin_repository:              ${{ inputs.is_mixin_repository }}
 
       - name: PylintVerifier
         uses: davidbrownell/v4-Common_PythonDevelopment/.github/actions/pylint_verifier@CI-v1
