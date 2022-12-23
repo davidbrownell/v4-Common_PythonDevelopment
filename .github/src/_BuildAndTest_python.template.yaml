@@ -18,6 +18,7 @@ The following values may be customized by child templates:
 
   - name: Name of this workflow
   - python_inputs: Additional inputs required by the child template.
+  - python_cache_steps: Steps invoked after source is checked out and standard cache content has been restored.
   - python_prologue_steps: Steps invoked after setup and activation but before build and tests.
   - python_epilogue_steps: Steps invoked after build and tests.
 
@@ -29,6 +30,8 @@ The following values may be customized by child templates:
       run_PylintVerifier:                   {type: boolean, required: true}
 <<% block python_inputs %>><<% endblock %>>
 <<% endblock %>>
+
+<<% block cache_steps %>><<% block python_cache_steps %>><<% endblock %>><<% endblock %>>
 
 <<% block prologue_steps %>>
       - name: PylintVerifier

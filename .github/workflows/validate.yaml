@@ -35,6 +35,9 @@ on:
   workflow_call:
     inputs:
       repo_branch:                          {type: string, required: true}
+      force_setup:                          {type: boolean, required: false, default: false}
+      force_activate:                       {type: boolean, required: false, default: false}
+
       bootstrap_branch_overrides:           {type: string, required: false}
 
 jobs:
@@ -51,7 +54,7 @@ jobs:
         configuration:
           - python310
 
-    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/callable_validate.yaml@CI-latest
+    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/callable_validate.yaml@CI-ExperimentalCache # CI-latest
     with:
       job_name_prefix:                      Common_PythonDevelopment
       repo_name:                            davidbrownell/v4-Common_PythonDevelopment
@@ -64,6 +67,9 @@ jobs:
       run_PylintVerifier:                   true
       run_Builder:                          true
       run_MatchTests:                       true
+
+      force_setup:                          ${{ inputs.force_setup }}
+      force_activate:                       ${{ inputs.force_activate }}
 
       # Use the following values to control how different test types are run:
       #
