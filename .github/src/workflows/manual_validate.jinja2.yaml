@@ -25,11 +25,11 @@ on:
 
 jobs:
   _bdbd97dc-3389-4433-b23b-23c2177a1366:
-    name: "Validate"
-    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/validate.yaml@CI-ExperimentalCache # TODO: CI-latest
+    name: "Validate (${{ github.ref_name }})"
+    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/validate.yaml@CI-latest
     with:
-      repo_branch:                          ${{ github.ref_name }}
+      repo_branch: ${{ github.ref_name }}
 
-      force_setup:                          ${{ inputs.force_setup }}
-      force_activate:                       ${{ inputs.force_activate }}
-      no_cache:                             ${{ inputs.no_cache }}
+      force_setup: ${{ inputs.force_setup }}
+      force_activate: ${{ inputs.force_activate }}
+      no_cache: ${{ inputs.no_cache }}
