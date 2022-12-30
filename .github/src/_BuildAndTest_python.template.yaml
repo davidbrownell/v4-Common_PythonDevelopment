@@ -38,14 +38,14 @@ The following values may be customized by child templates:
         uses: davidbrownell/v4-Common_PythonDevelopment/.github/actions/pylint_verifier@CI-v1
         if: ${{ inputs.run_PylintVerifier == true || inputs.run_PylintVerifier == 'true' }}
         with:
-          os:                               ${{ inputs.os }}
-          configuration:                    ${{ inputs.configuration }}
+          os: ${{ inputs.os }}
+          configuration: ${{ inputs.configuration }}
 
-          script_extension:                 ${{ steps.initialize.outputs.script_extension }}
-          shell_name:                       ${{ steps.initialize.outputs.shell_name }}
-          working_dir:                      ${{ steps.initialize.outputs.working_dir }}
+          script_extension: ${{ steps.initialize.outputs.script_extension }}
+          shell_name: ${{ steps.initialize.outputs.shell_name }}
+          working_dir: ${{ steps.initialize.outputs.working_dir }}
 
-          activate_statement:               ${{ steps.activate.outputs.activate_statement }}
+          activate_statement: ${{ steps.activate.outputs.activate_statement }}
 
 <<% block python_prologue_steps %>><<% endblock %>>
 <<% endblock %>>

@@ -22,7 +22,16 @@ on:
 
 jobs:
   _66a767fe-2d86-4e5e-aad4-3cc977d41aa1:
-    name: "Validate"
-    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/validate.yaml@CI-ExperimentalCache # TODO: CI-latest
+    name: "Validate (${{ github.ref_name }})"
+    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/validate.yaml@CI-latest
     with:
-      repo_branch:                          ${{ github.ref_name }}
+      repo_branch: ${{ github.ref_name }}
+
+  _b75c1cb9-f991-40c7-a16f-87ce5c4ea027:
+    name: "Validate with Dependencies (${{ github.ref_name }})"
+    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/validate_with_dependencies.yaml@CI-latest
+    with:
+      repo_branch: ${{ github.ref_name }}
+
+    needs:
+      - _66a767fe-2d86-4e5e-aad4-3cc977d41aa1
