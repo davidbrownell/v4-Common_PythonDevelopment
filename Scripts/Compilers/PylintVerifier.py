@@ -61,7 +61,10 @@ class Verifier(VerifierBase, IInvoker):
 
     # ----------------------------------------------------------------------
     # |  Public Types
-    IGNORE_FILENAME                         = "PylintVerifier-ignore"
+    IGNORE_FILENAMES                        = [
+        "PylintVerifier-ignore",
+        "PylintVerifier-DoNotParse",
+    ]
 
     DEFAULT_PASSING_SCORE                   = 9.0
 
@@ -107,7 +110,7 @@ class Verifier(VerifierBase, IInvoker):
         self,
         directory: Path,
     ) -> bool:
-        return (directory / self.__class__.IGNORE_FILENAME).exists()
+        return any((directory / filename).exists() for filename in self.__class__.IGNORE_FILENAMES)
 
     # ----------------------------------------------------------------------
     @overridemethod
@@ -282,9 +285,10 @@ class Verifier(VerifierBase, IInvoker):
 
             return "Skipped (test item)"
 
-        if (filename.parent / self.__class__.IGNORE_FILENAME).exists():
-            dm.WriteInfo("The file '{}' has been ignored due to '{}'.".format(filename, self.__class__.IGNORE_FILENAME))
-            return "Skipped (ignored)"
+        for ignore_filename in self.__class__.IGNORE_FILENAMES:
+            if (filename.parent / ignore_filename).exists():
+                dm.WriteInfo("The file '{}' has been ignored due to '{}'.".format(filename, ignore_filename))
+                return "Skipped (ignored)"
 
         # Find the configuration file
         configuration_filename: Optional[Path] = None
