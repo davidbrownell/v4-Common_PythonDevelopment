@@ -20,13 +20,13 @@ import os
 from pathlib import Path
 from typing import List, Optional
 
+from Common_Foundation import DynamicPluginArchitecture                     # type: ignore  # pylint: disable=import-error,unused-import
 from Common_Foundation.Shell import Commands                                # type: ignore  # pylint: disable=import-error,unused-import
 from Common_Foundation.Streams.DoneManager import DoneManager               # type: ignore  # pylint: disable=import-error,unused-import
 
 from RepositoryBootstrap import Configuration                               # type: ignore  # pylint: disable=import-error,unused-import
 from RepositoryBootstrap import Constants                                   # type: ignore  # pylint: disable=import-error,unused-import
 from RepositoryBootstrap import DataTypes                                   # type: ignore  # pylint: disable=import-error,unused-import
-from RepositoryBootstrap.SetupAndActivate import DynamicPluginArchitecture  # type: ignore  # pylint: disable=import-error,unused-import
 
 
 # ----------------------------------------------------------------------
