@@ -15,6 +15,7 @@
 # ----------------------------------------------------------------------
 """Contains the BuildExeBuildInfo object"""
 
+import inspect
 import os
 import shutil
 
@@ -38,21 +39,19 @@ class BuildExeBuildInfo(BuildInfoBase):
     # ----------------------------------------------------------------------
     def __init__(
         self,
-        build_name: str,
-        working_dir: Path,
+        name: str,
         required_development_configurations: Optional[list[Pattern]],
         *,
         disable_if_dependency_environment: bool,
     ):
-        if not working_dir.is_dir():
-            raise ValueError("'{}' is not a valid directory.".format(working_dir))
-
+        caller = inspect.getouterframes(inspect.currentframe(), 2)[1]
+        working_dir = PathEx.EnsureDir(Path(caller.filename).parent)
         setup_filename = working_dir / "setup.py"
         if not setup_filename.is_file():
             raise ValueError("'{}' must exist.".format(setup_filename))
 
         super(BuildExeBuildInfo, self).__init__(
-            name=build_name,
+            name=name,
             requires_output_dir=True,
             required_development_configurations=required_development_configurations,
             disable_if_dependency_environment=disable_if_dependency_environment,
