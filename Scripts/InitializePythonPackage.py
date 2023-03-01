@@ -191,6 +191,19 @@ def Execute(
             ),
         )
 
+    with (output_dir / "AutoSemVer.yaml").open("w") as f:
+        f.write(
+            textwrap.dedent(
+                """\
+                version_prefix: "{name}"
+                initial_version: {version}
+                """,
+            ).format(
+                name=config.library_name,
+                version=config.library_version,
+            ),
+        )
+
     return output_dir
 
 
