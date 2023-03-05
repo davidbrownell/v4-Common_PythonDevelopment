@@ -181,8 +181,11 @@ def Execute(
 
                 [project]
                 name = "{name}"
-                version = "{version}"
                 description = "{description}"
+                dynamic = ["version"]
+
+                [tool.setuptools.dynamic]
+                version = {attr = "__version__.VERSION"}
                 """,
             ).format(
                 name=config.library_name,
@@ -200,6 +203,19 @@ def Execute(
                 """,
             ).format(
                 name=config.library_name,
+                version=config.library_version,
+            ),
+        )
+
+    with (src_dir / "__version__.py").open("w") as f:
+        f.write(
+            textwrap.dedent(
+                """\
+                # pylint: disable=invalid-name,missing-module-docstring
+
+                VERSION = "{version}"
+                """,
+            ).format(
                 version=config.library_version,
             ),
         )
