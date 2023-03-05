@@ -4,5 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "Common_PythonDevelopment"
-version = "0.0.1"
 description = "Python library for 'Common_PythonDevelopment'."
+dynamic = ["version"]
+
+[tool.setuptools.dynamic]
+version = {attr = "__version__.VERSION"}

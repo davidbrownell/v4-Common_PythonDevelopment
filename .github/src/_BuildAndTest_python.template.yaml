@@ -26,14 +26,14 @@ The following values may be customized by child templates:
 
 <<% extends "{}/.github/src/_BuildAndTest.template.yaml".format("DEVELOPMENT_ENVIRONMENT_FOUNDATION" | env) %>>
 
-<<% block inputs %>>
+<<% block bat_inputs %>>
       run_PylintVerifier:                   {type: boolean, required: true}
 <<% block python_inputs %>><<% endblock %>>
 <<% endblock %>>
 
-<<% block cache_steps %>><<% block python_cache_steps %>><<% endblock %>><<% endblock %>>
+<<% block bat_cache_steps %>><<% block python_cache_steps %>><<% endblock %>><<% endblock %>>
 
-<<% block prologue_steps %>>
+<<% block bat_prologue_steps %>>
       - name: PylintVerifier
         uses: davidbrownell/v4-Common_PythonDevelopment/.github/actions/pylint_verifier@CI-v1
         if: ${{ inputs.run_PylintVerifier == true || inputs.run_PylintVerifier == 'true' }}
@@ -46,10 +46,7 @@ The following values may be customized by child templates:
           working_dir: ${{ steps.initialize.outputs.working_dir }}
 
           activate_statement: ${{ steps.activate.outputs.activate_statement }}
-
 <<% block python_prologue_steps %>><<% endblock %>>
 <<% endblock %>>
 
-<<% block epilogue_steps %>>
-<<% block python_epilogue_steps %>><<% endblock %>>
-<<% endblock %>>
+<<% block bat_epilogue_steps %>><<% block python_epilogue_steps %>><<% endblock %>><<% endblock %>>
