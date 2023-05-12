@@ -56,6 +56,7 @@ def GetConfigurations() -> Union[
                 {
                     "Python": [
                         Configuration.VersionInfo("coverage", SemVer("6.4.3")),
+                        Configuration.VersionInfo("pyfakefs", SemVer("5.2.2")),
                         Configuration.VersionInfo("pylint", SemVer("2.14.5")),
                         Configuration.VersionInfo("pytest", SemVer("7.1.2")),
                         Configuration.VersionInfo("pytest_asyncio", SemVer("0.19.0")),
