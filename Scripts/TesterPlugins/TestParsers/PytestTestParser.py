@@ -36,6 +36,13 @@ from Common_FoundationEx import TyperEx
 class TestParser(TestParserImpl):
     # ----------------------------------------------------------------------
     # |
+    # |  Public Types
+    # |
+    # ----------------------------------------------------------------------
+    COMMAND_LINE_ARG_PREFIX                 = "pytest"
+
+    # ----------------------------------------------------------------------
+    # |
     # |  Public Methods
     # |
     # ----------------------------------------------------------------------
@@ -45,7 +52,14 @@ class TestParser(TestParserImpl):
     # ----------------------------------------------------------------------
     @overridemethod
     def GetCustomCommandLineArgs(self) -> TyperEx.TypeDefinitionsType:
-        return {}
+        return {
+            self.__class__.COMMAND_LINE_ARG_PREFIX: (
+                list[str],
+                {
+                    "help": "Options to pass to the command line when invoking typer",
+                },
+            ),
+        }
 
     # ----------------------------------------------------------------------
     @overridemethod
@@ -91,6 +105,11 @@ class TestParser(TestParserImpl):
         # Note that pytest MUST be invoked as 'pytest <args>' rather than 'python -m pytest <args>' to
         # work with PyCoverageTestExecutor.
         command_line_prefix = 'pytest --verbose -vv --capture=no'
+
+        if self.__class__.COMMAND_LINE_ARG_PREFIX in context:
+            command_line_prefix += " {}".format(
+                " ".join('"{}"'.format(arg) for arg in context[self.__class__.COMMAND_LINE_ARG_PREFIX]),
+            )
 
         return '{} "{}"'.format(
             command_line_prefix,
