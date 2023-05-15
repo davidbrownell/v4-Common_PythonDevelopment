@@ -39,7 +39,7 @@ jobs:
         configuration:
           - python310
 
-    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/callable_validate.yaml@CI-latest
+    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/callable_validate.yaml@CI-v1
     with:
       job_name_prefix: Common_PythonDevelopment
       repo_name: davidbrownell/v4-Common_PythonDevelopment

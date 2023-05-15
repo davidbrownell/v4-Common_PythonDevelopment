@@ -40,13 +40,13 @@ on:
 jobs:
   _dd962a2f-8e5d-439f-8607-4b34864f6038:
     name: "Validate (target: ${{ github.base_ref }})"
-    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/validate.yaml@CI-latest
+    uses: davidbrownell/v4-Common_PythonDevelopment/.github/workflows/validate.yaml@CI-v1
     with:
       repo_branch: ${{ github.head_ref }}
 
   _3c506163-7746-4439-b06d-84c28cd260bd:
     name: "Validate Pull Request (target: ${{ github.base_ref }})"
-    uses: davidbrownell/v4-Common_Foundation/.github/workflows/callable_validate_pull_request.yaml@CI-latest
+    uses: davidbrownell/v4-Common_Foundation/.github/workflows/callable_validate_pull_request.yaml@CI-v1
     with:
       job_name_prefix: Common_PythonDevelopment
       repo_name: davidbrownell/v4-Common_PythonDevelopment
