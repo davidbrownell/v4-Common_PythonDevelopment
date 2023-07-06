@@ -24,7 +24,7 @@ The following values may be customized by child templates:
 
 #>>
 
-<<% extends "{}/.github/src/_BuildAndTest.template.yaml".format("DEVELOPMENT_ENVIRONMENT_FOUNDATION" | env) %>>
+<<% extends "{}/.github/src/templates/BuildAndTest.template.yaml".format("DEVELOPMENT_ENVIRONMENT_FOUNDATION" | env) %>>
 
 <<% block bat_inputs %>>
       run_PylintVerifier:                   {type: boolean, required: true}
