@@ -13,6 +13,6 @@
 # |  http://www.boost.org/LICENSE_1_0.txt.
 # |
 # ----------------------------------------------------------------------
-<<% extends "../_BuildAndTest_python.template.yaml" %>>
+<<% extends "../templates/BuildAndTest_python.template.yaml" %>>
 
 <<% block bat_name %>>"[impl] Common_PythonDevelopment-based Repository Validation"<<% endblock %>>
