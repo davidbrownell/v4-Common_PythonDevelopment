@@ -224,6 +224,11 @@ class TestParser(TestParserImpl):
     # ----------------------------------------------------------------------
     # ----------------------------------------------------------------------
     # ----------------------------------------------------------------------
+
+    # "Clearing the cache" is suddenly appearing in the standard output of some tests in some
+    # scenarios but not in all. I'm adding the content to this regular expression, but this
+    # could end up being a brittle solution.
+
     _parse_individual_regex                 = re.compile(
         r"""(?#
         Start of line                       )^(?#
@@ -231,7 +236,8 @@ class TestParser(TestParserImpl):
         Sep                                 )::(?#
         Test                                )(?P<test>\S+) +(?#
         Potential multiline output          )(?:[^\n]*\n)*?(?#
-        Result                              )(?P<result>[A-Z]+$)(?#
+        Result                              )(?P<result>[A-Z]+)(?#
+        "Clearing the cache"                )(:?Clearing the cache)?(?#
         End of line                         )$(?#
         )""",
         re.MULTILINE,
